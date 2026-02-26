@@ -1,8 +1,9 @@
+require('dotenv').config({ path: '../.env' });
 const mongoose = require('mongoose');
-const User = require('./models/User');
+const User = require('../models/User');
 
 // MongoDB Connection
-const MONGODB_URI = 'mongodb+srv://SafetyFirst_db:safety123@safetyfirst.ht5erjh.mongodb.net/?appName=SafetyFirst';
+const MONGODB_URI = process.env.MONGO_URI;
 
 const users = [
   {
@@ -60,7 +61,7 @@ async function seedDatabase() {
     // Insert new users
     const createdUsers = await User.insertMany(users);
     console.log(`✅ Successfully created ${createdUsers.length} users:`);
-    
+
     createdUsers.forEach(user => {
       console.log(`   - Username: ${user.username} | Role: ${user.role} | Dashboard: ${user.dashboardType}`);
     });

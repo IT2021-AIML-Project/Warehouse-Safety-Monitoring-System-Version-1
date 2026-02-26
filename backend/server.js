@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes');
@@ -14,7 +15,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
+
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
@@ -22,7 +23,7 @@ app.use((req, res, next) => {
 });
 
 // MongoDB Connection
-const MONGODB_URI = 'mongodb+srv://SafetyFirst_db:safety123@safetyfirst.ht5erjh.mongodb.net/?appName=SafetyFirst';
+const MONGODB_URI = process.env.MONGO_URI;
 
 mongoose.connect(MONGODB_URI)
   .then(() => {
@@ -43,10 +44,10 @@ app.get('/', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ 
-    success: false, 
-    message: 'Something went wrong!', 
-    error: err.message 
+  res.status(500).json({
+    success: false,
+    message: 'Something went wrong!',
+    error: err.message
   });
 });
 

@@ -72,9 +72,9 @@ const LandingPage = () => {
   return (
     <Box>
       {/* Header */}
-      <AppBar 
-        position="fixed" 
-        sx={{ 
+      <AppBar
+        position="fixed"
+        sx={{
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(10px)',
           color: '#333',
@@ -95,7 +95,7 @@ const LandingPage = () => {
                 {navigationItems.map((item) => (
                   <Button
                     key={item}
-                    sx={{ 
+                    sx={{
                       color: '#666',
                       fontWeight: 500,
                       '&:hover': { color: '#1976D2' }
@@ -167,7 +167,7 @@ const LandingPage = () => {
                 <br />
                 <span style={{ color: '#1976D2' }}>Monitoring System</span>
               </Typography>
-              
+
               <Typography
                 variant="h6"
                 sx={{
@@ -179,8 +179,8 @@ const LandingPage = () => {
                 }}
               >
                 An AI-powered system for real-time detection,
-                 monitoring, and reporting of Personal Protective Equipment 
-                 (PPE) compliance in warehouse environments.
+                monitoring, and reporting of Personal Protective Equipment
+                (PPE) compliance in warehouse environments.
               </Typography>
 
               {/* Stats */}
@@ -239,7 +239,7 @@ const LandingPage = () => {
                 </Button>
               </Box>
             </Grid>
-            
+
             <Grid item xs={12} md={5}>
               <Box
                 sx={{
@@ -321,7 +321,7 @@ const LandingPage = () => {
             >
               FEATURES
             </Typography>
-            
+
             <Typography
               variant="h2"
               sx={{
@@ -333,7 +333,7 @@ const LandingPage = () => {
             >
               Powerful Features for Smart Safety
             </Typography>
-            
+
             <Typography
               variant="h6"
               sx={{
@@ -343,7 +343,7 @@ const LandingPage = () => {
                 lineHeight: 1.6,
               }}
             >
-             The system provides a set of AI-driven and management-oriented features designed to improve PPE compliance, safety monitoring, and decision-making within warehouse environments.
+              The system provides a set of AI-driven and management-oriented features designed to improve PPE compliance, safety monitoring, and decision-making within warehouse environments.
             </Typography>
           </Box>
 
@@ -383,8 +383,8 @@ const LandingPage = () => {
                   PPE Compliance Monitoring
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666', lineHeight: 1.6 }}>
-                 Real-time detection of Personal Protective Equipment (PPE) such as helmets, safety vests, and masks using a YOLO-based object detection model.
-                 The system identifies non-compliance events from CCTV video streams and records violations with confidence scores for further analysis.
+                  Real-time detection of Personal Protective Equipment (PPE) such as helmets, safety vests, and masks using a YOLO-based object detection model.
+                  The system identifies non-compliance events from CCTV video streams and records violations with confidence scores for further analysis.
                 </Typography>
               </Card>
             </Grid>
@@ -494,7 +494,7 @@ const LandingPage = () => {
             >
               PROCESS
             </Typography>
-            
+
             <Typography
               variant="h2"
               sx={{
@@ -506,7 +506,7 @@ const LandingPage = () => {
             >
               How SafetyFirst Works
             </Typography>
-            
+
             <Typography
               variant="h6"
               sx={{
@@ -546,7 +546,7 @@ const LandingPage = () => {
                   Setup & Configure
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666', lineHeight: 1.6 }}>
-                 The system is initialized by registering employees, defining warehouse zones, and configuring CCTV camera inputs. PPE requirements and system rules are set to ensure accurate monitoring and role-based access within the warehouse environment.
+                  The system is initialized by registering employees, defining warehouse zones, and configuring CCTV camera inputs. PPE requirements and system rules are set to ensure accurate monitoring and role-based access within the warehouse environment.
                 </Typography>
               </Box>
             </Grid>
@@ -604,7 +604,7 @@ const LandingPage = () => {
                   Analyze & Improve
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666', lineHeight: 1.6 }}>
-                 Collected compliance data is analyzed to generate visual reports and safety summaries. The system helps identify risk patterns and supports management in making informed decisions to improve overall workplace safety.
+                  Collected compliance data is analyzed to generate visual reports and safety summaries. The system helps identify risk patterns and supports management in making informed decisions to improve overall workplace safety.
                 </Typography>
               </Box>
             </Grid>

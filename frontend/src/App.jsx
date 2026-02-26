@@ -2,12 +2,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import LandingPage from './components/LandingPage';
-import Login from './components/Login';
-import Register from './components/Register';
-import Dashboard from './components/Dashboard';
-import './App.css';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import LandingPage from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import './styles/App.css';
 
 const theme = createTheme({
   palette: {
@@ -26,22 +26,22 @@ const theme = createTheme({
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  
+
   if (loading) {
     return <div>Loading...</div>;
   }
-  
+
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
 // Public Route component (redirects to dashboard if authenticated)
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  
+
   if (loading) {
     return <div>Loading...</div>;
   }
-  
+
   return !isAuthenticated ? children : <Navigate to="/dashboard" />;
 };
 
@@ -54,41 +54,41 @@ function App() {
           <div className="App">
             <Routes>
               {/* Public Routes */}
-              <Route 
-                path="/" 
+              <Route
+                path="/"
                 element={
                   <PublicRoute>
                     <LandingPage />
                   </PublicRoute>
-                } 
+                }
               />
-              <Route 
-                path="/login" 
+              <Route
+                path="/login"
                 element={
                   <PublicRoute>
                     <Login />
                   </PublicRoute>
-                } 
+                }
               />
-              <Route 
-                path="/register" 
+              <Route
+                path="/register"
                 element={
                   <PublicRoute>
                     <Register />
                   </PublicRoute>
-                } 
+                }
               />
-              
+
               {/* Protected Routes */}
-              <Route 
-                path="/dashboard" 
+              <Route
+                path="/dashboard"
                 element={
                   <ProtectedRoute>
                     <Dashboard />
                   </ProtectedRoute>
-                } 
+                }
               />
-              
+
               {/* Catch all route */}
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>

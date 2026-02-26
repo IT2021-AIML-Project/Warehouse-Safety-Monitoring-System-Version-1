@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import {
   Container,
   Paper,
@@ -17,17 +17,17 @@ import {
   Alert,
 } from '@mui/material';
 import {
-  Inventory,
+  Notifications,
   ExitToApp,
-  Shield,
-  LocalShipping,
-  Warning,
-  CheckCircle,
+  CalendarMonth,
+  Email,
+  Assessment,
+  TrendingUp,
   Lock,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
-const InventoryManagementDashboard = () => {
+const NotificationReportingDashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
@@ -84,13 +84,38 @@ const InventoryManagementDashboard = () => {
     }
   };
 
-
+  const stats = [
+    {
+      title: 'Notifications Sent',
+      value: '2,847',
+      icon: <Notifications />,
+      color: '#1976D2',
+    },
+    {
+      title: 'Monthly Reports',
+      value: '24',
+      icon: <CalendarMonth />,
+      color: '#4caf50',
+    },
+    {
+      title: 'Email Alerts',
+      value: '1,523',
+      icon: <Email />,
+      color: '#ff9800',
+    },
+    {
+      title: 'Report Growth',
+      value: '+18%',
+      icon: <TrendingUp />,
+      color: '#9c27b0',
+    },
+  ];
 
   return (
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%)',
+        background: 'linear-gradient(135deg, rgba(244, 67, 54, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%)',
         py: 4,
       }}
     >
@@ -99,7 +124,7 @@ const InventoryManagementDashboard = () => {
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
             <Box>
               <Typography variant="h4" sx={{ fontWeight: 700, color: '#333', mb: 1 }}>
-                Safety Equipment Inventory Management
+                Notification System and Monthly Reporting
               </Typography>
               <Typography variant="h6" sx={{ color: '#666' }}>
                 Welcome, {user?.fullName}
@@ -132,13 +157,37 @@ const InventoryManagementDashboard = () => {
           </Box>
         </Paper>
 
+        <Grid container spacing={3}>
+          {stats.map((stat, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <Card elevation={3} sx={{ borderRadius: '16px', height: '100%' }}>
+                <CardContent>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box>
+                      <Typography variant="h4" sx={{ fontWeight: 700, color: stat.color }}>
+                        {stat.value}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#666', mt: 1 }}>
+                        {stat.title}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ color: stat.color, fontSize: 48 }}>
+                      {stat.icon}
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+
         <Paper elevation={3} sx={{ p: 4, mt: 4, borderRadius: '20px' }}>
           <Typography variant="h5" sx={{ fontWeight: 700, mb: 3 }}>
-            <Inventory sx={{ mr: 1, verticalAlign: 'middle' }} />
-            Inventory Overview
+            <Assessment sx={{ mr: 1, verticalAlign: 'middle' }} />
+            Notification & Reporting Overview
           </Typography>
           <Typography variant="body1" sx={{ color: '#666' }}>
-            Safety equipment inventory management content will be displayed here...
+            Notification system and monthly reporting content will be displayed here...
           </Typography>
         </Paper>
 
@@ -182,4 +231,4 @@ const InventoryManagementDashboard = () => {
   );
 };
 
-export default InventoryManagementDashboard;
+export default NotificationReportingDashboard;
