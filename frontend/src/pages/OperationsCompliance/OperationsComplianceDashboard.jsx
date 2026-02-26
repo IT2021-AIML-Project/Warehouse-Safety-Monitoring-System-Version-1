@@ -25,34 +25,21 @@ import {
   Lock,
   Person,
   Dashboard,
-  Warning,
-  Description,
-  BarChart,
-  Assignment,
   Close,
   Visibility,
   VisibilityOff,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import OperationsComplianceDashboardHome from './OperationsComplianceDashboardHome';
-import ViolationRecords from './ViolationRecords';
-import DailyReport from './DailyReport';
-import ComplianceAnalysis from './ComplianceAnalysis';
 
 const drawerWidth = 250;
 
 const pageMeta = [
-  { label: 'Dashboard',          icon: <Dashboard    sx={{ fontSize: 20, color: '#7c3aed' }} /> },
-  { label: 'Violation Records',  icon: <Warning      sx={{ fontSize: 20, color: '#7c3aed' }} /> },
-  { label: 'Daily Report',       icon: <Description  sx={{ fontSize: 20, color: '#7c3aed' }} /> },
-  { label: 'Analysis',           icon: <BarChart     sx={{ fontSize: 20, color: '#7c3aed' }} /> },
+  { label: 'Dashboard', icon: <Dashboard sx={{ fontSize: 20, color: '#7c3aed' }} /> },
 ];
 
 const navItems = [
-  { label: 'Dashboard',         icon: Dashboard   },
-  { label: 'Violation Records', icon: Warning     },
-  { label: 'Daily Report',      icon: Description },
-  { label: 'Analysis',          icon: BarChart    },
+  { label: 'Dashboard', icon: Dashboard },
 ];
 
 const OperationsComplianceDashboard = () => {
@@ -221,9 +208,6 @@ const OperationsComplianceDashboard = () => {
 
         {/* Pages */}
         {activeTab === 0 && <OperationsComplianceDashboardHome />}
-        {activeTab === 1 && <ViolationRecords />}
-        {activeTab === 2 && <DailyReport />}
-        {activeTab === 3 && <ComplianceAnalysis />}
       </Box>
 
       {/* ── Change Password Dialog ── */}

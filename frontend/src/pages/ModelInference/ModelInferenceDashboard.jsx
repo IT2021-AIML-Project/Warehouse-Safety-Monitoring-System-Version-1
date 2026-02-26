@@ -25,37 +25,21 @@ import {
   Lock,
   Person,
   Dashboard,
-  Psychology,
-  Timeline,
-  CheckCircle,
-  ListAlt,
   Close,
   Visibility,
   VisibilityOff,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import ModelInferenceDashboardHome from './ModelInferenceDashboardHome';
-import InferenceOutputs from './InferenceOutputs';
-import PerformanceAnalysis from './PerformanceAnalysis';
-import EvaluationCriteria from './EvaluationCriteria';
-import InferenceLogs from './InferenceLogs';
 
 const drawerWidth = 250;
 
 const pageMeta = [
-  { label: 'Dashboard',           icon: <Dashboard   sx={{ fontSize: 20, color: '#1d4ed8' }} /> },
-  { label: 'Inference Outputs',   icon: <Psychology  sx={{ fontSize: 20, color: '#1d4ed8' }} /> },
-  { label: 'Performance Analysis',icon: <Timeline    sx={{ fontSize: 20, color: '#1d4ed8' }} /> },
-  { label: 'Evaluation Criteria', icon: <CheckCircle sx={{ fontSize: 20, color: '#1d4ed8' }} /> },
-  { label: 'Inference Logs',      icon: <ListAlt     sx={{ fontSize: 20, color: '#1d4ed8' }} /> },
+  { label: 'Dashboard', icon: <Dashboard sx={{ fontSize: 20, color: '#1d4ed8' }} /> },
 ];
 
 const navItems = [
-  { label: 'Dashboard',            icon: Dashboard,   color: '#1d4ed8' },
-  { label: 'Inference Outputs',    icon: Psychology,  color: '#1d4ed8' },
-  { label: 'Performance Analysis', icon: Timeline,    color: '#1d4ed8' },
-  { label: 'Evaluation Criteria',  icon: CheckCircle, color: '#1d4ed8' },
-  { label: 'Inference Logs',       icon: ListAlt,     color: '#1d4ed8' },
+  { label: 'Dashboard', icon: Dashboard, color: '#1d4ed8' },
 ];
 
 const ModelInferenceDashboard = () => {
@@ -237,10 +221,6 @@ const ModelInferenceDashboard = () => {
 
         {/* Pages */}
         {activeTab === 0 && <ModelInferenceDashboardHome />}
-        {activeTab === 1 && <InferenceOutputs />}
-        {activeTab === 2 && <PerformanceAnalysis />}
-        {activeTab === 3 && <EvaluationCriteria />}
-        {activeTab === 4 && <InferenceLogs />}
       </Box>
 
       {/* ── Change Password Dialog ── */}

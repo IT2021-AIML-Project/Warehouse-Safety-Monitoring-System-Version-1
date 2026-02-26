@@ -25,10 +25,6 @@ import {
   Lock,
   Person,
   Dashboard,
-  NotificationsActive,
-  Visibility,
-  CheckCircle,
-  Archive,
   Close,
   Visibility as VisibilityIcon,
   VisibilityOff,
@@ -36,27 +32,15 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import NotificationReportingDashboardHome from './NotificationReportingDashboardHome';
-import GenerateNotifications from './GenerateNotifications';
-import ViewNotifications from './ViewNotifications';
-import AcknowledgeAlerts from './AcknowledgeAlerts';
-import ArchiveNotifications from './ArchiveNotifications';
 
 const drawerWidth = 260;
 
 const pageMeta = [
-  { label: 'Dashboard',                    icon: <Dashboard         sx={{ fontSize: 20, color: '#ef4444' }} /> },
-  { label: 'Generate Notifications',       icon: <NotificationsActive sx={{ fontSize: 20, color: '#ef4444' }} /> },
-  { label: 'View Notifications',           icon: <Visibility        sx={{ fontSize: 20, color: '#ef4444' }} /> },
-  { label: 'Acknowledge Alerts',           icon: <CheckCircle       sx={{ fontSize: 20, color: '#ef4444' }} /> },
-  { label: 'Archive Notifications',        icon: <Archive           sx={{ fontSize: 20, color: '#ef4444' }} /> },
+  { label: 'Dashboard', icon: <Dashboard sx={{ fontSize: 20, color: '#ef4444' }} /> },
 ];
 
 const navItems = [
-  { label: 'Dashboard',              icon: Dashboard           },
-  { label: 'Generate Notifications', icon: NotificationsActive },
-  { label: 'View Notifications',     icon: Visibility          },
-  { label: 'Acknowledge Alerts',     icon: CheckCircle         },
-  { label: 'Archive Notifications',  icon: Archive             },
+  { label: 'Dashboard', icon: Dashboard },
 ];
 
 const NotificationReportingDashboard = () => {
@@ -225,10 +209,6 @@ const NotificationReportingDashboard = () => {
 
         {/* Pages */}
         {activeTab === 0 && <NotificationReportingDashboardHome />}
-        {activeTab === 1 && <GenerateNotifications />}
-        {activeTab === 2 && <ViewNotifications />}
-        {activeTab === 3 && <AcknowledgeAlerts />}
-        {activeTab === 4 && <ArchiveNotifications />}
       </Box>
 
       {/* ── Change Password Dialog ── */}
