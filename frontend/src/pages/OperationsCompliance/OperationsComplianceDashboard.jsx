@@ -19,27 +19,81 @@ import {
   AppBar,
   Toolbar,
   Avatar,
+  Grid,
 } from '@mui/material';
 import {
   ExitToApp,
   Lock,
   Person,
-  Dashboard,
   Close,
   Visibility,
   VisibilityOff,
+  Warning,
+  AccessTime,
+  CalendarMonth,
+  ShowChart,
+  Assignment,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import OperationsComplianceDashboardHome from './OperationsComplianceDashboardHome';
+import { ViolationsTable } from './ViolationsTable';
+import { SafetyScoreCard } from './SafetyScoreCard';
+import { DailyReportsView } from './DailyReportsView';
+import { MonthlyReportsView } from './MonthlyReportsView';
+import { AnalyticsView } from './AnalyticsView';
 
-const drawerWidth = 250;
+const drawerWidth = 260;
+
+/* ─── Mock Data ─────────────────────────────────────────── */
+const INITIAL_VIOLATIONS = [
+  { id: 'VIO-001', date: '2026-02-27', employee: 'Juan Dela Cruz',  section: 'Storage Block A',      type: 'No Helmet',      confidence: 94, status: 'Pending'       },
+  { id: 'VIO-002', date: '2026-02-27', employee: 'Maria Santos',    section: 'Loading Dock 1',        type: 'No Safety Vest', confidence: 88, status: 'Verified'      },
+  { id: 'VIO-003', date: '2026-02-27', employee: 'Carlos Reyes',    section: 'Packing Station B',     type: 'No Gloves',      confidence: 91, status: 'Pending'       },
+  { id: 'VIO-004', date: '2026-02-27', employee: 'Ana Lopez',       section: 'Restricted Area North', type: 'No Helmet',      confidence: 97, status: 'Verified'      },
+  { id: 'VIO-005', date: '2026-02-26', employee: 'Pedro Garcia',    section: 'Storage Block A',       type: 'No Mask',        confidence: 85, status: 'False Positive'},
+];
+
+const DAILY_METRICS = {
+  violations: 4, complianceScore: 92, safetyScore: 93, totalPeople: 38,
+};
+const VIOLATION_BREAKDOWN = {
+  noHelmet: 2, noMask: 1, noSafetyVest: 1, noGloves: 1, noSafetyBoots: 0,
+};
+const MONTHLY_METRICS = {
+  violations: 47, avgComplianceScore: 91, avgSafetyScore: 92, totalPeople: 35,
+};
+const HOURLY_DATA = [
+  { hour: '9AM',  violations: 2,  complianceScore: 95 },
+  { hour: '10AM', violations: 1,  complianceScore: 97 },
+  { hour: '11AM', violations: 3,  complianceScore: 92 },
+  { hour: '12PM', violations: 0,  complianceScore: 100 },
+  { hour: '1PM',  violations: 4,  complianceScore: 89 },
+  { hour: '2PM',  violations: 2,  complianceScore: 94 },
+  { hour: '3PM',  violations: 1,  complianceScore: 97 },
+  { hour: '4PM',  violations: 3,  complianceScore: 91 },
+  { hour: '5PM',  violations: 0,  complianceScore: 100 },
+];
+const DAILY_DATA = [
+  { date: 'Feb 21', violations: 5,  complianceScore: 91, safetyScore: 92 },
+  { date: 'Feb 22', violations: 3,  complianceScore: 94, safetyScore: 95 },
+  { date: 'Feb 23', violations: 7,  complianceScore: 88, safetyScore: 89 },
+  { date: 'Feb 24', violations: 2,  complianceScore: 96, safetyScore: 97 },
+  { date: 'Feb 25', violations: 4,  complianceScore: 92, safetyScore: 93 },
+  { date: 'Feb 26', violations: 6,  complianceScore: 90, safetyScore: 91 },
+  { date: 'Feb 27', violations: 4,  complianceScore: 93, safetyScore: 93 },
+];
 
 const pageMeta = [
-  { label: 'Dashboard', icon: <Dashboard sx={{ fontSize: 20, color: '#7c3aed' }} /> },
+  { label: 'View Violations',  icon: <Warning      sx={{ fontSize: 20, color: '#7c3aed' }} /> },
+  { label: 'Daily Reports',    icon: <AccessTime   sx={{ fontSize: 20, color: '#7c3aed' }} /> },
+  { label: 'Monthly Reports',  icon: <CalendarMonth sx={{ fontSize: 20, color: '#7c3aed' }} /> },
+  { label: 'Analytics',        icon: <ShowChart    sx={{ fontSize: 20, color: '#7c3aed' }} /> },
 ];
 
 const navItems = [
-  { label: 'Dashboard', icon: Dashboard },
+  { label: 'View Violations',  Icon: Warning       },
+  { label: 'Daily Reports',    Icon: AccessTime    },
+  { label: 'Monthly Reports',  Icon: CalendarMonth },
+  { label: 'Analytics',        Icon: ShowChart     },
 ];
 
 const OperationsComplianceDashboard = () => {
@@ -52,6 +106,46 @@ const OperationsComplianceDashboard = () => {
   const [showPasswords, setShowPasswords] = useState({ current: false, new: false, confirm: false });
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
+
+  // Violations state
+  const [violations, setViolations] = useState(INITIAL_VIOLATIONS);
+  const handleUpdateViolation = (updated) =>
+    setViolations((prev) => prev.map((v) => (v.id === updated.id ? updated : v)));
+  const handleDeleteViolation = (id) =>
+    setViolations((prev) => prev.filter((v) => v.id !== id));
+  const handleAddViolation = (newV) =>
+    setViolations((prev) => [newV, ...prev]);
+
+  // Daily reports state
+  const [dailyReports, setDailyReports] = useState([]);
+  const handleGenerateDailyReport = (date) => {
+    const id = `DR-${Date.now()}`;
+    setDailyReports((prev) => [{
+      id, date, generatedAt: new Date().toISOString(),
+      totalViolations: DAILY_METRICS.violations,
+      complianceScore: DAILY_METRICS.complianceScore,
+      safetyScore: DAILY_METRICS.safetyScore,
+      totalPeople: DAILY_METRICS.totalPeople,
+    }, ...prev]);
+  };
+  const handleDeleteDailyReport = (id) =>
+    setDailyReports((prev) => prev.filter((r) => r.id !== id));
+
+  // Monthly reports state
+  const [monthlyReports, setMonthlyReports] = useState([]);
+  const handleGenerateMonthlyReport = (startDate, endDate) => {
+    if (!startDate || !endDate) return;
+    const id = `MR-${Date.now()}`;
+    setMonthlyReports((prev) => [{
+      id, startDate, endDate, generatedAt: new Date().toISOString(),
+      totalViolations: MONTHLY_METRICS.violations,
+      avgComplianceScore: MONTHLY_METRICS.avgComplianceScore,
+      avgSafetyScore: MONTHLY_METRICS.avgSafetyScore,
+      totalPeople: MONTHLY_METRICS.totalPeople,
+    }, ...prev]);
+  };
+  const handleDeleteMonthlyReport = (id) =>
+    setMonthlyReports((prev) => prev.filter((r) => r.id !== id));
 
   const handleLogout = () => { logout(); navigate('/'); };
 
@@ -131,14 +225,15 @@ const OperationsComplianceDashboard = () => {
         </Box>
 
         {/* Nav */}
-        <List sx={{ pt: 2 }}>
+        <List sx={{ pt: 2 }}>          
           {navItems.map((item, index) => {
-            const IconComp = item.icon;
+            const { Icon } = item;
+            const isSelected = activeTab === index;
             return (
               <ListItem
                 key={index}
                 button
-                selected={activeTab === index}
+                selected={isSelected}
                 onClick={() => setActiveTab(index)}
                 sx={{
                   mx: 1.5, mb: 0.5, borderRadius: '8px',
@@ -149,11 +244,11 @@ const OperationsComplianceDashboard = () => {
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 36 }}>
-                  <IconComp sx={{ color: activeTab === index ? '#7c3aed' : '#64748b', fontSize: 20 }} />
+                  <Icon sx={{ color: isSelected ? '#7c3aed' : '#64748b', fontSize: 20 }} />
                 </ListItemIcon>
                 <ListItemText
                   primary={item.label}
-                  primaryTypographyProps={{ fontWeight: activeTab === index ? 600 : 400, fontSize: '13px' }}
+                  primaryTypographyProps={{ fontWeight: isSelected ? 700 : 400, fontSize: '13px' }}
                 />
               </ListItem>
             );
@@ -206,8 +301,56 @@ const OperationsComplianceDashboard = () => {
           </Toolbar>
         </AppBar>
 
+        {/* Safety Score Card — full width top banner (all tabs) */}
+        <Box sx={{ px: 3, pt: 3, pb: 0 }}>
+          <SafetyScoreCard
+            totalPeople={DAILY_METRICS.totalPeople}
+            violations={DAILY_METRICS.violations}
+            safetyScore={DAILY_METRICS.safetyScore}
+            violationBreakdown={VIOLATION_BREAKDOWN}
+          />
+        </Box>
+
         {/* Pages */}
-        {activeTab === 0 && <OperationsComplianceDashboardHome />}
+        <Box sx={{ p: 3, flexGrow: 1 }}>
+          {/* View Violations */}
+          {activeTab === 0 && (
+            <ViolationsTable
+              violations={violations}
+              onUpdate={handleUpdateViolation}
+              onDelete={handleDeleteViolation}
+              onAdd={handleAddViolation}
+            />
+          )}
+
+          {/* Daily Reports */}
+          {activeTab === 1 && (
+            <DailyReportsView
+              reports={dailyReports}
+              onGenerateReport={handleGenerateDailyReport}
+              onDeleteReport={handleDeleteDailyReport}
+              dailyMetrics={DAILY_METRICS}
+            />
+          )}
+
+          {/* Monthly Reports */}
+          {activeTab === 2 && (
+            <MonthlyReportsView
+              reports={monthlyReports}
+              onGenerateReport={handleGenerateMonthlyReport}
+              onDeleteReport={handleDeleteMonthlyReport}
+              monthlyMetrics={MONTHLY_METRICS}
+            />
+          )}
+
+          {/* Analytics */}
+          {activeTab === 3 && (
+            <AnalyticsView
+              hourlyData={HOURLY_DATA}
+              dailyData={DAILY_DATA}
+            />
+          )}
+        </Box>
       </Box>
 
       {/* ── Change Password Dialog ── */}

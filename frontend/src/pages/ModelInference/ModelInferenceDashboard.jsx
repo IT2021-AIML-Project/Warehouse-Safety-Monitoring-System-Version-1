@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import {
   Typography,
@@ -19,40 +19,213 @@ import {
   AppBar,
   Toolbar,
   Avatar,
+  Grid,
+  Card,
+  CardContent,
+  CardActionArea,
+  Chip,
+  Tabs,
+  Tab,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Switch,
+  FormControlLabel,
+  Slider,
+  Tooltip,
 } from '@mui/material';
 import {
   ExitToApp,
   Lock,
   Person,
-  Dashboard,
+  Security,
   Close,
   Visibility,
   VisibilityOff,
+  CloudUpload,
+  Videocam,
+  Schedule,
+  FiberManualRecord,
+  ArrowBack,
+  Dashboard,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import ModelInferenceDashboardHome from './ModelInferenceDashboardHome';
+import UploadImage from './UploadImage';
+import InferenceTable from './InferenceTable';
+import MetricsDashboard from './MetricsDashboard';
 
-const drawerWidth = 250;
-
-const pageMeta = [
-  { label: 'Dashboard', icon: <Dashboard sx={{ fontSize: 20, color: '#1d4ed8' }} /> },
+const allZones = [
+  { id: 'ZONE-001', name: 'Storage Block A',      type: 'Storage',    status: 'Active'   },
+  { id: 'ZONE-002', name: 'Loading Dock 1',        type: 'Loading',    status: 'Active'   },
+  { id: 'ZONE-003', name: 'Packing Station B',     type: 'Packing',    status: 'Active'   },
+  { id: 'ZONE-004', name: 'Restricted Area North', type: 'Restricted', status: 'Active'   },
+  { id: 'ZONE-005', name: 'Storage Block B',       type: 'Storage',    status: 'Inactive' },
+  { id: 'ZONE-006', name: 'Loading Dock 2',        type: 'Loading',    status: 'Active'   },
+  { id: 'ZONE-007', name: 'Packing Station C',     type: 'Packing',    status: 'Inactive' },
+  { id: 'ZONE-008', name: 'Restricted Area South', type: 'Restricted', status: 'Active'   },
 ];
+const activeZones = allZones.filter((z) => z.status === 'Active');
 
-const navItems = [
-  { label: 'Dashboard', icon: Dashboard, color: '#1d4ed8' },
-];
+const typeColorMap = {
+  Storage:    { bg: '#dbeafe', color: '#1d4ed8' },
+  Loading:    { bg: '#fef9c3', color: '#a16207' },
+  Restricted: { bg: '#fee2e2', color: '#dc2626' },
+  Packing:    { bg: '#dcfce7', color: '#16a34a' },
+};
+
+const zoneSvgPaths = {
+  Storage:    'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z',
+  Loading:    'M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zm-.5 1.5 1.96 2.5H17V9.5h2.5zM6 18c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm13.5-1c0 .55-.45 1-1 1s-1-.45-1-1 .45-1 1-1 1 .45 1 1z',
+  Restricted: 'M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4 5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5z',
+  Packing:    'M18 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C8.96 2.54 8.05 2 7 2 5.34 2 4 3.34 4 5c0 .35.07.69.18 1H2v13h2v3h16v-3h2V6h-4zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM7 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z',
+};
+
+const ZoneIconBox = ({ type, size = 56 }) => {
+  const c = typeColorMap[type] || { bg: '#f1f5f9', color: '#64748b' };
+  return (
+    <Box sx={{
+      width: size, height: size, borderRadius: '14px',
+      backgroundColor: c.bg,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      color: c.color, flexShrink: 0,
+    }}>
+      <svg viewBox="0 0 24 24" fill="currentColor" width={size * 0.55} height={size * 0.55}>
+        <path d={zoneSvgPaths[type] || zoneSvgPaths.Storage} />
+      </svg>
+    </Box>
+  );
+};
+
+const zonePPEItems = {
+  Storage:    [
+    { name: 'Safety Helmet',   category: 'Head Protection',   emoji: '⛑️',  bg: '#dbeafe' },
+    { name: 'Safety Vest',     category: 'Body Protection',   emoji: '🦺',  bg: '#dcfce7' },
+    { name: 'Safety Boots',    category: 'Foot Protection',   emoji: '🥾',  bg: '#fef9c3' },
+  ],
+  Loading:    [
+    { name: 'Safety Helmet',   category: 'Head Protection',   emoji: '⛑️',  bg: '#dbeafe' },
+    { name: 'High-Vis Jacket', category: 'Body Protection',   emoji: '🦺',  bg: '#dcfce7' },
+    { name: 'Safety Boots',    category: 'Foot Protection',   emoji: '🥾',  bg: '#fef9c3' },
+    { name: 'Safety Gloves',   category: 'Hand Protection',   emoji: '🧤',  bg: '#f3e8ff' },
+  ],
+  Restricted: [
+    { name: 'Safety Helmet',   category: 'Head Protection',   emoji: '⛑️',  bg: '#dbeafe' },
+    { name: 'High-Vis Jacket', category: 'Body Protection',   emoji: '🦺',  bg: '#dcfce7' },
+    { name: 'Safety Boots',    category: 'Foot Protection',   emoji: '🥾',  bg: '#fef9c3' },
+    { name: 'Safety Gloves',   category: 'Hand Protection',   emoji: '🧤',  bg: '#f3e8ff' },
+    { name: 'Face Shield',     category: 'Face Protection',   emoji: '🛡️',  bg: '#fee2e2' },
+  ],
+  Packing:    [
+    { name: 'Safety Helmet',   category: 'Head Protection',   emoji: '⛑️',  bg: '#dbeafe' },
+    { name: 'Safety Vest',     category: 'Body Protection',   emoji: '🦺',  bg: '#dcfce7' },
+    { name: 'Safety Gloves',   category: 'Hand Protection',   emoji: '🧤',  bg: '#f3e8ff' },
+  ],
+};
+
+const CLASS_LABELS = ['Helmet', 'No Helmet', 'Vest', 'No Vest'];
+const generateId = () =>
+  typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `id-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+const randomInRange = (min, max) => min + Math.random() * (max - min);
+
+function generateSimulatedInference() {
+  const inference_id = generateId();
+  const timestamp = new Date().toISOString();
+  const fps = Math.floor(randomInRange(5, 30));
+  const mAP = Number(randomInRange(0.8, 0.95).toFixed(2));
+  const numDetections = Math.floor(randomInRange(1, 3)) + 1;
+  const detections = [];
+  for (let i = 0; i < numDetections; i++) {
+    const class_label = CLASS_LABELS[Math.floor(Math.random() * CLASS_LABELS.length)];
+    const is_violation = class_label === 'No Helmet' || class_label === 'No Vest';
+    detections.push({
+      detection_id: generateId(),
+      class_label,
+      confidence: Number(randomInRange(0.6, 0.99).toFixed(2)),
+      is_violation,
+    });
+  }
+  return { inference_id, timestamp, fps, mAP, detections };
+}
+
+const drawerWidth = 260;
 
 const ModelInferenceDashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState(0);
+  const [selectedZone, setSelectedZone] = useState(null);
+  const [mode, setMode] = useState(0);
+  const [inferences, setInferences] = useState([]);
+
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
   const [showPasswords, setShowPasswords] = useState({ current: false, new: false, confirm: false });
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
 
+  const [webcamActive, setWebcamActive] = useState(false);
+  const [webcamCamera, setWebcamCamera] = useState('Camera 1');
+  const [webcamFramesProcessed, setWebcamFramesProcessed] = useState(0);
+  const webcamIntervalRef = useRef(null);
+
+  const [scheduleActive, setScheduleActive] = useState(false);
+  const [scheduleCamera, setScheduleCamera] = useState('Camera 1');
+  const [scheduleStartTime, setScheduleStartTime] = useState('08:00');
+  const [scheduleEndTime, setScheduleEndTime] = useState('17:00');
+  const [scheduleLunchEnabled, setScheduleLunchEnabled] = useState(true);
+  const [scheduleBreakStart, setScheduleBreakStart] = useState('12:00');
+  const [scheduleBreakEnd, setScheduleBreakEnd] = useState('13:00');
+  const [scheduleFramesPerCycle, setScheduleFramesPerCycle] = useState(30);
+  const [confirmScheduleOpen, setConfirmScheduleOpen] = useState(false);
+  const scheduleIntervalRef = useRef(null);
+
+  const [scheduledRunsToday, setScheduledRunsToday] = useState(0);
+  const [totalFramesProcessed, setTotalFramesProcessed] = useState(0);
+  const [totalViolationsFromMonitoring, setTotalViolationsFromMonitoring] = useState(0);
+  const [lastRunTime, setLastRunTime] = useState(null);
+
+  const addInference = (inference) => setInferences((prev) => [inference, ...prev]);
+  const deleteInference = (inferenceId) =>
+    setInferences((prev) => prev.filter((inf) => inf.inference_id !== inferenceId));
+
+  useEffect(() => {
+    if (!webcamActive) return;
+    webcamIntervalRef.current = setInterval(() => {
+      addInference(generateSimulatedInference());
+      setWebcamFramesProcessed((n) => n + 1);
+    }, 2000);
+    return () => { if (webcamIntervalRef.current) clearInterval(webcamIntervalRef.current); };
+  }, [webcamActive]);
+
+  const handleWebcamStart = () => setWebcamActive(true);
+  const handleWebcamStop = () => setWebcamActive(false);
+
+  useEffect(() => {
+    if (!scheduleActive) return;
+    const runCycle = () => {
+      setScheduledRunsToday((n) => n + 1);
+      setLastRunTime(new Date().toISOString());
+      let frames = 0;
+      let violations = 0;
+      for (let i = 0; i < scheduleFramesPerCycle; i++) {
+        const inf = generateSimulatedInference();
+        addInference(inf);
+        frames += 1;
+        violations += inf.detections?.filter((d) => d.is_violation).length ?? 0;
+      }
+      setTotalFramesProcessed((n) => n + frames);
+      setTotalViolationsFromMonitoring((n) => n + violations);
+    };
+    runCycle();
+    scheduleIntervalRef.current = setInterval(runCycle, 10000);
+    return () => { if (scheduleIntervalRef.current) clearInterval(scheduleIntervalRef.current); };
+  }, [scheduleActive, scheduleFramesPerCycle]);
+
+  const handleScheduleStartConfirm = () => { setConfirmScheduleOpen(false); setScheduleActive(true); };
+  const handleScheduleStop = () => setScheduleActive(false);
   const handleLogout = () => { logout(); navigate('/'); };
 
   const handleChangePasswordOpen = () => {
@@ -60,17 +233,14 @@ const ModelInferenceDashboard = () => {
     setPasswordError('');
     setPasswordSuccess('');
   };
-
   const handleChangePasswordClose = () => {
     setChangePasswordOpen(false);
     setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
     setPasswordError('');
     setPasswordSuccess('');
   };
-
   const handlePasswordInputChange = (field) => (e) =>
     setPasswordForm({ ...passwordForm, [field]: e.target.value });
-
   const togglePasswordVisibility = (field) =>
     setShowPasswords({ ...showPasswords, [field]: !showPasswords[field] });
 
@@ -82,7 +252,6 @@ const ModelInferenceDashboard = () => {
     if (passwordForm.currentPassword === passwordForm.newPassword) { setPasswordError('New password must be different from current password'); return false; }
     return true;
   };
-
   const handleChangePassword = async () => {
     if (!validatePasswordForm()) return;
     try {
@@ -94,10 +263,32 @@ const ModelInferenceDashboard = () => {
     }
   };
 
+  const handleZoneClick = (zone) => {
+    setSelectedZone(zone);
+    setMode(0);
+    setWebcamActive(false);
+    setScheduleActive(false);
+    setInferences([]);
+    setWebcamFramesProcessed(0);
+    setScheduledRunsToday(0);
+    setTotalFramesProcessed(0);
+    setTotalViolationsFromMonitoring(0);
+    setLastRunTime(null);
+  };
+  const handleBackToZones = () => {
+    setSelectedZone(null);
+    setWebcamActive(false);
+    setScheduleActive(false);
+  };
+
+  const schedulePreviewText = scheduleLunchEnabled
+    ? `System will run hourly from ${scheduleStartTime} to ${scheduleEndTime}, excluding ${scheduleBreakStart}${scheduleBreakEnd}. Each cycle will process ${scheduleFramesPerCycle} frames over 2 minutes.`
+    : `System will run hourly from ${scheduleStartTime} to ${scheduleEndTime}. Each cycle will process ${scheduleFramesPerCycle} frames over 2 minutes.`;
+
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
 
-      {/* ── Sidebar ── */}
+      {/* Sidebar */}
       <Drawer
         variant="permanent"
         sx={{
@@ -108,52 +299,68 @@ const ModelInferenceDashboard = () => {
             boxSizing: 'border-box',
             backgroundColor: '#ffffff',
             borderRight: '1px solid #e2e8f0',
+            display: 'flex',
+            flexDirection: 'column',
           },
         }}
       >
         {/* Logo */}
         <Box sx={{ p: 3, borderBottom: '1px solid #e2e8f0' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Box
-              sx={{
-                width: 40, height: 40,
-                backgroundColor: '#1d4ed8',
-                borderRadius: '8px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
-              }}
-            >
-              <Psychology sx={{ fontSize: 24 }} />
+            <Box sx={{
+              width: 40, height: 40, backgroundColor: '#1976D2',
+              borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
+            }}>
+              <Security sx={{ fontSize: 24 }} />
             </Box>
-            <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e293b', fontSize: '14px' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e293b', fontSize: '14px', lineHeight: 1.3 }}>
               Model Inference
             </Typography>
           </Box>
         </Box>
 
-        {/* Nav */}
-        <List sx={{ pt: 2 }}>
-          {navItems.map((item, index) => {
-            const IconComp = item.icon;
+        {/* Active Zones label */}
+        <Box sx={{ px: 3, pt: 2.5, pb: 1 }}>
+          <Typography variant="overline" sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '11px', letterSpacing: '0.08em' }}>
+            Active Zones
+          </Typography>
+        </Box>
+
+        {/* Zone list */}
+        <List sx={{ px: 1, pb: 1, flexGrow: 1, overflowY: 'auto' }}>
+          {activeZones.map((zone) => {
+            const c = typeColorMap[zone.type] || { bg: '#f1f5f9', color: '#64748b' };
+            const isSelected = selectedZone?.id === zone.id;
             return (
               <ListItem
-                key={index}
+                key={zone.id}
                 button
-                selected={activeTab === index}
-                onClick={() => setActiveTab(index)}
+                selected={isSelected}
+                onClick={() => handleZoneClick(zone)}
                 sx={{
-                  mx: 1.5, mb: 0.5, borderRadius: '8px',
-                  '&.Mui-selected': {
-                    backgroundColor: '#dbeafe', color: '#1d4ed8',
-                    '& .MuiListItemIcon-root': { color: '#1d4ed8' },
-                  },
+                  mx: 1, mb: 0.5, borderRadius: '8px',
+                  '&.Mui-selected': { backgroundColor: c.bg },
+                  '&:hover': { backgroundColor: isSelected ? c.bg : '#f1f5f9' },
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 36 }}>
-                  <IconComp sx={{ color: activeTab === index ? '#1d4ed8' : '#64748b', fontSize: 20 }} />
+                  <Box sx={{
+                    width: 28, height: 28, borderRadius: '7px',
+                    backgroundColor: isSelected ? c.bg : '#f1f5f9',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: isSelected ? c.color : '#64748b',
+                    border: isSelected ? `1.5px solid ${c.color}` : '1.5px solid transparent',
+                  }}>
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
+                      <path d={zoneSvgPaths[zone.type] || zoneSvgPaths.Storage} />
+                    </svg>
+                  </Box>
                 </ListItemIcon>
                 <ListItemText
-                  primary={item.label}
-                  primaryTypographyProps={{ fontWeight: activeTab === index ? 600 : 400, fontSize: '13px' }}
+                  primary={zone.name}
+                  secondary={zone.type}
+                  primaryTypographyProps={{ fontSize: '13px', fontWeight: isSelected ? 600 : 400, color: isSelected ? c.color : '#1e293b' }}
+                  secondaryTypographyProps={{ fontSize: '11px', color: isSelected ? c.color : '#94a3b8' }}
                 />
               </ListItem>
             );
@@ -161,83 +368,376 @@ const ModelInferenceDashboard = () => {
         </List>
 
         {/* Bottom buttons */}
-        <Box sx={{ mt: 'auto', p: 2, borderTop: '1px solid #e2e8f0' }}>
+        <Box sx={{ p: 2, borderTop: '1px solid #e2e8f0' }}>
           <Button
             fullWidth variant="outlined" startIcon={<Lock />}
             onClick={handleChangePasswordOpen}
-            sx={{ mb: 1, borderRadius: '8px', textTransform: 'none', fontSize: '13px', borderColor: '#1d4ed8', color: '#1d4ed8' }}
+            sx={{ mb: 1, borderRadius: '8px', textTransform: 'none', fontSize: '14px' }}
           >
             Change Password
           </Button>
           <Button
             fullWidth variant="contained" startIcon={<ExitToApp />}
             onClick={handleLogout}
-            sx={{
-              borderRadius: '8px', backgroundColor: '#ef4444',
-              textTransform: 'none', fontSize: '13px',
-              '&:hover': { backgroundColor: '#dc2626' },
-            }}
+            sx={{ borderRadius: '8px', backgroundColor: '#ef4444', textTransform: 'none', fontSize: '14px', '&:hover': { backgroundColor: '#dc2626' } }}
           >
             Logout
           </Button>
         </Box>
       </Drawer>
 
-      {/* ── Main Content ── */}
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, minHeight: '100vh', backgroundColor: '#f8fafc', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}
-      >
+      {/* Main Content */}
+      <Box component="main" sx={{ flexGrow: 1, minHeight: '100vh', backgroundColor: '#f8fafc', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+
         {/* Top AppBar */}
-        <AppBar
-          position="sticky" elevation={0}
-          sx={{ backgroundColor: '#ffffff', borderBottom: '1px solid #e2e8f0', zIndex: 1 }}
-        >
+        <AppBar position="sticky" elevation={0} sx={{ backgroundColor: '#ffffff', borderBottom: '1px solid #e2e8f0', zIndex: 1 }}>
           <Toolbar sx={{ justifyContent: 'space-between', minHeight: '64px !important', px: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <Box
-                sx={{
-                  width: 36, height: 36, borderRadius: '50%',
-                  backgroundColor: '#dbeafe',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              >
-                {pageMeta[activeTab]?.icon}
+              {selectedZone && (
+                <IconButton size="small" onClick={handleBackToZones} sx={{ mr: 0.5, color: '#64748b' }}>
+                  <ArrowBack sx={{ fontSize: 20 }} />
+                </IconButton>
+              )}
+              <Box sx={{
+                width: 36, height: 36, borderRadius: '50%',
+                backgroundColor: selectedZone ? (typeColorMap[selectedZone.type]?.bg || '#dbeafe') : '#dbeafe',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                {selectedZone ? (
+                  <svg viewBox="0 0 24 24" fill={typeColorMap[selectedZone.type]?.color || '#1976D2'} width="18" height="18">
+                    <path d={zoneSvgPaths[selectedZone.type] || zoneSvgPaths.Storage} />
+                  </svg>
+                ) : (
+                  <Dashboard sx={{ fontSize: 18, color: '#1976D2' }} />
+                )}
               </Box>
-              <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e293b', fontSize: '18px' }}>
-                {pageMeta[activeTab]?.label}
-              </Typography>
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e293b', fontSize: '16px', lineHeight: 1.2 }}>
+                  {selectedZone ? selectedZone.name : 'Active Zones'}
+                </Typography>
+                {selectedZone && (
+                  <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '11px' }}>
+                    {selectedZone.type} Zone  AI Safety Monitoring
+                  </Typography>
+                )}
+              </Box>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <Avatar sx={{ width: 32, height: 32, backgroundColor: '#dbeafe', color: '#1d4ed8', fontSize: '14px' }}>
+              <Avatar sx={{ width: 32, height: 32, backgroundColor: '#dbeafe', color: '#1976D2', fontSize: '14px' }}>
                 <Person sx={{ fontSize: 18 }} />
               </Avatar>
               <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 500 }}>
-                Welcome, {user?.name || user?.username || user?.email || 'Analyst'}
+                Welcome, {user?.name || user?.username || user?.email || 'User'}
               </Typography>
             </Box>
           </Toolbar>
         </AppBar>
 
-        {/* Pages */}
-        {activeTab === 0 && <ModelInferenceDashboardHome />}
+        {/* Zone Grid (home) */}
+        {!selectedZone && (
+          <Box sx={{ p: 4, flexGrow: 1 }}>
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h5" sx={{ fontWeight: 700, color: '#1e293b', mb: 0.5 }}>
+                Active Zones
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#64748b' }}>
+                Select a zone to begin AI safety monitoring for that area.
+              </Typography>
+            </Box>
+
+            <Grid container spacing={3}>
+              {activeZones.map((zone) => {
+                const c = typeColorMap[zone.type] || { bg: '#f1f5f9', color: '#64748b' };
+                return (
+                  <Grid item xs={12} sm={6} md={4} key={zone.id}>
+                    <Card
+                      elevation={0}
+                      sx={{
+                        borderRadius: '16px',
+                        border: '1px solid #e2e8f0',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                        transition: 'all 0.2s ease',
+                        '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', borderColor: c.color },
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <CardActionArea onClick={() => handleZoneClick(zone)} sx={{ p: 0 }}>
+                        <Box sx={{ height: 6, backgroundColor: c.color }} />
+                        <CardContent sx={{ p: 3 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
+                            <ZoneIconBox type={zone.type} size={60} />
+                            <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                              <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#1e293b', lineHeight: 1.3, mb: 0.5 }}>
+                                {zone.name}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                {zone.id}
+                              </Typography>
+                            </Box>
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Chip label={zone.type} size="small" sx={{ backgroundColor: c.bg, color: c.color, fontWeight: 600, fontSize: '11px' }} />
+                            <Chip label="Active" size="small" sx={{ backgroundColor: '#dcfce7', color: '#16a34a', fontWeight: 600, fontSize: '11px' }} />
+                          </Box>
+                          <Box sx={{ mt: 2.5, p: 1.5, borderRadius: '8px', backgroundColor: '#f8fafc', display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Security sx={{ fontSize: 16, color: '#1976D2' }} />
+                            <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 500 }}>
+                              Click to start AI monitoring
+                            </Typography>
+                          </Box>
+                        </CardContent>
+                      </CardActionArea>
+                    </Card>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </Box>
+        )}
+
+        {/* Zone Monitoring (inside a zone) */}
+        {selectedZone && (
+          <Box sx={{ flexGrow: 1 }}>
+
+            {/* Assigned PPE Items */}
+            {selectedZone && (() => {
+              const ppeItems = zonePPEItems[selectedZone.type] || [];
+              return (
+                <Box sx={{ px: 4, pt: 3, pb: 2, backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                  <Typography variant="overline" sx={{ color: '#94a3b8', fontWeight: 700, fontSize: '11px', letterSpacing: '0.08em', display: 'block', mb: 2, textAlign: 'center' }}>
+                    Assigned PPE Items
+                  </Typography>
+                  <Grid container spacing={2} justifyContent="center">
+                    {ppeItems.map((item) => (
+                      <Grid item xs={6} sm={4} md={2} key={item.name}>
+                        <Card elevation={0} sx={{ borderRadius: '16px', border: '1px solid #e2e8f0', textAlign: 'center', p: 2, backgroundColor: '#ffffff', transition: 'box-shadow 0.2s', '&:hover': { boxShadow: '0 4px 16px rgba(0,0,0,0.08)' } }}>
+                          <Box sx={{ width: 64, height: 64, borderRadius: '14px', backgroundColor: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 1.5, fontSize: '32px' }}>
+                            {item.emoji}
+                          </Box>
+                          <Typography variant="body2" sx={{ fontWeight: 700, color: '#1e293b', mb: 0.25 }}>{item.name}</Typography>
+                          <Typography variant="caption" sx={{ color: '#1976D2', fontWeight: 500 }}>{item.category}</Typography>
+                        </Card>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
+              );
+            })()}
+
+            {/* Mode Tabs */}
+            <Box sx={{ pt: 3, pb: 0, backgroundColor: '#fff', borderBottom: '1px solid #e2e8f0' }}>
+              <Tabs
+                value={mode}
+                onChange={(_, v) => setMode(v)}
+                centered
+                sx={{ '& .MuiTab-root': { fontWeight: 600, fontSize: '14px', textTransform: 'none', minHeight: 48 } }}
+              >
+                <Tab icon={<CloudUpload sx={{ fontSize: 18 }} />} iconPosition="start" label="Upload Image" />
+                <Tab icon={<Videocam sx={{ fontSize: 18 }} />} iconPosition="start" label="Live Webcam" />
+                <Tab icon={<Schedule sx={{ fontSize: 18 }} />} iconPosition="start" label="CCTV Monitoring" />
+              </Tabs>
+            </Box>
+
+            {/* Mode 0: Upload Image */}
+            {mode === 0 && (
+              <Box sx={{ p: 4 }}>
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e293b', mb: 0.5 }}>
+                    Manual Safety Scan  {selectedZone.name}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#64748b' }}>
+                    Upload a warehouse image to perform a one-time AI safety analysis for this zone.
+                  </Typography>
+                </Box>
+                <UploadImage onInferenceComplete={addInference} />
+              </Box>
+            )}
+
+            {/* Mode 1: Live Webcam */}
+            {mode === 1 && (
+              <Box sx={{ p: 4 }}>
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e293b', mb: 0.5 }}>
+                    Live Real-Time Monitoring  {selectedZone.name}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#64748b' }}>
+                    Stream from a camera and run continuous safety analysis.
+                  </Typography>
+                </Box>
+                <Card elevation={0} sx={{ borderRadius: '12px', border: '1px solid #e2e8f0', p: 3, maxWidth: 560 }}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <FormControl fullWidth size="small">
+                        <InputLabel>Camera</InputLabel>
+                        <Select value={webcamCamera} label="Camera" onChange={(e) => setWebcamCamera(e.target.value)} disabled={webcamActive}>
+                          <MenuItem value="Camera 1">Camera 1</MenuItem>
+                          <MenuItem value="Camera 2">Camera 2</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                      <Button variant="contained" onClick={handleWebcamStart} disabled={webcamActive} sx={{ borderRadius: '8px', textTransform: 'none' }}>
+                        Start Monitoring
+                      </Button>
+                      <Button variant="outlined" color="error" onClick={handleWebcamStop} disabled={!webcamActive} sx={{ borderRadius: '8px', textTransform: 'none' }}>
+                        Stop Monitoring
+                      </Button>
+                      <Chip
+                        label={webcamActive ? 'Live' : 'Offline'}
+                        color={webcamActive ? 'success' : 'default'}
+                        icon={webcamActive ? <FiberManualRecord sx={{ fontSize: '14px !important' }} /> : undefined}
+                      />
+                    </Grid>
+                    {webcamActive && (
+                      <Grid item xs={12}>
+                        <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                          <Typography variant="caption" color="text.secondary">Frames processed</Typography>
+                          <Typography variant="h5" fontWeight="bold">{webcamFramesProcessed}</Typography>
+                          <Typography variant="caption" color="text.secondary">Detections appended every 2 seconds (simulated).</Typography>
+                        </Box>
+                      </Grid>
+                    )}
+                  </Grid>
+                </Card>
+              </Box>
+            )}
+
+            {/* Mode 2: CCTV Schedule */}
+            {mode === 2 && (
+              <Box sx={{ p: 4 }}>
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e293b', mb: 0.5 }}>
+                    Automated CCTV Monitoring  {selectedZone.name}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#64748b' }}>
+                    Configure automatic hourly safety scans during operational hours.
+                  </Typography>
+                </Box>
+                <Alert severity="warning" sx={{ mb: 3, borderRadius: '8px' }}>
+                  Automated monitoring consumes system resources. Use during operational hours only.
+                </Alert>
+                <Card elevation={0} sx={{ borderRadius: '12px', border: '1px solid #e2e8f0', p: 3, mb: 3 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>Schedule Settings</Typography>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} sm={6}>
+                      <FormControl fullWidth size="small">
+                        <InputLabel>Camera</InputLabel>
+                        <Select value={scheduleCamera} label="Camera" onChange={(e) => setScheduleCamera(e.target.value)} disabled={scheduleActive}>
+                          <MenuItem value="Camera 1">Camera 1</MenuItem>
+                          <MenuItem value="Camera 2">Camera 2</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={6} sm={3}>
+                      <TextField label="Start Time" type="time" value={scheduleStartTime} onChange={(e) => setScheduleStartTime(e.target.value)} InputLabelProps={{ shrink: true }} fullWidth size="small" disabled={scheduleActive} />
+                    </Grid>
+                    <Grid item xs={6} sm={3}>
+                      <TextField label="End Time" type="time" value={scheduleEndTime} onChange={(e) => setScheduleEndTime(e.target.value)} InputLabelProps={{ shrink: true }} fullWidth size="small" disabled={scheduleActive} />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <FormControlLabel control={<Switch checked={scheduleLunchEnabled} onChange={(e) => setScheduleLunchEnabled(e.target.checked)} disabled={scheduleActive} />} label="Enable lunch break exclusion" />
+                    </Grid>
+                    {scheduleLunchEnabled && (
+                      <>
+                        <Grid item xs={6} sm={3}>
+                          <TextField label="Break Start" type="time" value={scheduleBreakStart} onChange={(e) => setScheduleBreakStart(e.target.value)} InputLabelProps={{ shrink: true }} fullWidth size="small" disabled={scheduleActive} />
+                        </Grid>
+                        <Grid item xs={6} sm={3}>
+                          <TextField label="Break End" type="time" value={scheduleBreakEnd} onChange={(e) => setScheduleBreakEnd(e.target.value)} InputLabelProps={{ shrink: true }} fullWidth size="small" disabled={scheduleActive} />
+                        </Grid>
+                      </>
+                    )}
+                    <Grid item xs={12}>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                        Frames per cycle: {scheduleFramesPerCycle}
+                      </Typography>
+                      <Slider value={scheduleFramesPerCycle} onChange={(_, v) => setScheduleFramesPerCycle(v)} min={5} max={60} valueLabelDisplay="auto" disabled={scheduleActive} sx={{ maxWidth: 320 }} />
+                    </Grid>
+                  </Grid>
+                </Card>
+                <Card elevation={0} sx={{ borderRadius: '10px', p: 2, mb: 3, bgcolor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                  <Typography variant="caption" color="text.secondary">Schedule preview</Typography>
+                  <Typography variant="body2" sx={{ lineHeight: 1.6, mt: 0.5 }}>{schedulePreviewText}</Typography>
+                </Card>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', mb: 4 }}>
+                  <Button variant="contained" onClick={() => setConfirmScheduleOpen(true)} disabled={scheduleActive} sx={{ borderRadius: '8px', textTransform: 'none' }}>
+                    Start Automated Monitoring
+                  </Button>
+                  <Button variant="outlined" color="error" onClick={handleScheduleStop} disabled={!scheduleActive} sx={{ borderRadius: '8px', textTransform: 'none' }}>
+                    Stop Monitoring
+                  </Button>
+                  <Chip label={scheduleActive ? 'Schedule Active' : 'Schedule Stopped'} color={scheduleActive ? 'success' : 'default'} />
+                </Box>
+                <Card elevation={0} sx={{ borderRadius: '12px', border: '1px solid #e2e8f0', p: 3 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>Monitoring Overview</Typography>
+                  <Grid container spacing={3}>
+                    {[
+                      { label: 'Scheduled runs today', value: scheduledRunsToday },
+                      { label: 'Total frames processed', value: totalFramesProcessed },
+                      { label: 'Total violations detected', value: totalViolationsFromMonitoring },
+                      { label: 'Last run time', value: lastRunTime ? new Date(lastRunTime).toLocaleTimeString() : '', isText: true },
+                    ].map(({ label, value, isText }) => (
+                      <Grid item xs={6} md={3} key={label}>
+                        <Typography variant="caption" color="text.secondary">{label}</Typography>
+                        <Typography variant={isText ? 'body2' : 'h5'} fontWeight={isText ? 500 : 'bold'}>{value}</Typography>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Card>
+              </Box>
+            )}
+
+            {/* Metrics */}
+            <Box sx={{ px: 4, pb: 4 }}>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#1e293b' }}>Performance Overview</Typography>
+                <Typography variant="body2" sx={{ color: '#64748b' }}>Key metrics from all safety scans in this zone.</Typography>
+              </Box>
+              <MetricsDashboard inferences={inferences} />
+            </Box>
+
+            {/* Safety Scan History */}
+            <Box sx={{ px: 4, pb: 5 }}>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#1e293b' }}>Safety Scan History</Typography>
+                <Typography variant="body2" sx={{ color: '#64748b' }}>Previous AI safety analyses for {selectedZone.name}.</Typography>
+              </Box>
+              <Card elevation={0} sx={{ borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+                <CardContent sx={{ p: 3 }}>
+                  <InferenceTable inferences={inferences} onDelete={deleteInference} />
+                </CardContent>
+              </Card>
+              <Typography variant="caption" sx={{ display: 'block', mt: 2, color: '#94a3b8', fontStyle: 'italic' }}>
+                AI decisions should be reviewed by a safety supervisor before disciplinary action.
+              </Typography>
+            </Box>
+          </Box>
+        )}
       </Box>
 
-      {/* ── Change Password Dialog ── */}
-      <Dialog
-        open={changePasswordOpen} onClose={handleChangePasswordClose}
-        maxWidth="sm" fullWidth
-        PaperProps={{ sx: { borderRadius: '12px', padding: '8px' } }}
-      >
+      {/* Confirm Schedule Dialog */}
+      <Dialog open={confirmScheduleOpen} onClose={() => setConfirmScheduleOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '12px' } }}>
+        <DialogTitle>Start automated monitoring?</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary">
+            The system will run on the configured schedule for <strong>{selectedZone?.name}</strong>. Continue?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmScheduleOpen(false)}>Cancel</Button>
+          <Button variant="contained" onClick={handleScheduleStartConfirm}>Start</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Change Password Dialog */}
+      <Dialog open={changePasswordOpen} onClose={handleChangePasswordClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '12px', padding: '8px' } }}>
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2 }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>Change Password</Typography>
           <IconButton onClick={handleChangePasswordClose} sx={{ color: '#64748b' }}><Close /></IconButton>
         </DialogTitle>
-
         <DialogContent sx={{ pt: 1 }}>
           {passwordError   && <Alert severity="error"   sx={{ mb: 2 }}>{passwordError}</Alert>}
           {passwordSuccess && <Alert severity="success" sx={{ mb: 2 }}>{passwordSuccess}</Alert>}
-
           {[
             { field: 'currentPassword', label: 'Current Password', key: 'current' },
             { field: 'newPassword',     label: 'New Password',     key: 'new'     },
@@ -258,19 +758,25 @@ const ModelInferenceDashboard = () => {
             />
           ))}
         </DialogContent>
-
         <DialogActions sx={{ px: 3, pb: 3, pt: 2 }}>
           <Button onClick={handleChangePasswordClose} variant="outlined" sx={{ borderRadius: '8px', textTransform: 'none', minWidth: 100 }}>
             Cancel
           </Button>
           <Button
             onClick={handleChangePassword} variant="contained" disabled={passwordSuccess !== ''}
-            sx={{ borderRadius: '8px', textTransform: 'none', minWidth: 100, backgroundColor: '#1d4ed8', '&:hover': { backgroundColor: '#1e40af' } }}
+            sx={{ borderRadius: '8px', textTransform: 'none', minWidth: 100, backgroundColor: '#1976D2', '&:hover': { backgroundColor: '#1565c0' } }}
           >
             Change Password
           </Button>
         </DialogActions>
       </Dialog>
+
+      <style>{`
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+      `}</style>
     </Box>
   );
 };
