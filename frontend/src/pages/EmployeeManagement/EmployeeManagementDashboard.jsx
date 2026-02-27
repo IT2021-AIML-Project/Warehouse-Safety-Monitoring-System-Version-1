@@ -36,6 +36,7 @@ import Footer from '../../components/Footer';
 import EmployeeDashboardHome from './EmployeeDashboardHome';
 import EmployeeSupportInquiries from './EmployeeSupportInquiries';
 import EmployeeNotificationsPage from './EmployeeNotificationsPage';
+import EmployeeFeedbackPage from './EmployeeFeedbackPage';
 
 const INITIAL_NOTIFICATIONS = [
   { id: 1, title: 'PPE Inspection Required', message: 'Please inspect your assigned Safety Helmet before entering Zone A today.', time: '10 mins ago', severity: 'warning', read: false },
@@ -150,6 +151,7 @@ const EmployeeManagementDashboard = () => {
             selectedNotifId={selectedNotifId}
           />
         )}
+        {activeTab === 3 && <EmployeeFeedbackPage />}
       </Box>
 
       <Footer />

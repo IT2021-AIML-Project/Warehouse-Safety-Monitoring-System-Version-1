@@ -24,11 +24,13 @@ import {
   Settings,
   Close,
   FiberManualRecord,
+  Feedback,
 } from '@mui/icons-material';
 
 const navTabs = [
-  { key: 0, label: 'Dashboard', icon: Dashboard },
+  { key: 0, label: 'Dashboard',         icon: Dashboard  },
   { key: 1, label: 'Support & Inquiries', icon: HeadsetMic },
+  { key: 3, label: 'Feedback',           icon: Feedback   },
 ];
 
 // ── Severity styles for notification dots ────────────────────────────────

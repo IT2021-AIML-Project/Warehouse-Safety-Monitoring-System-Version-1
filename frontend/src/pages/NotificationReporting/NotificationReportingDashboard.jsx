@@ -29,18 +29,38 @@ import {
   Visibility as VisibilityIcon,
   VisibilityOff,
   Campaign,
+  Send,
+  History,
+  AdminPanelSettings,
+  Feedback,
+  Email,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import NotificationReportingDashboardHome from './NotificationReportingDashboardHome';
+import SendNotificationForm from './SendNotificationForm';
+import SentNotificationsList from './SentNotificationsList';
+import AdminNotificationsPage from './AdminNotificationsPage';
+import EmployeeFeedbacksView from './EmployeeFeedbacksView';
+import SendEmailForm from './SendEmailForm';
 
 const drawerWidth = 260;
 
 const pageMeta = [
-  { label: 'Dashboard', icon: <Dashboard sx={{ fontSize: 20, color: '#ef4444' }} /> },
+  { label: 'Dashboard',             icon: <Dashboard            sx={{ fontSize: 20, color: '#ef4444' }} /> },
+  { label: 'Send Notification',     icon: <Send                 sx={{ fontSize: 20, color: '#ef4444' }} /> },
+  { label: 'Sent Notifications',    icon: <History              sx={{ fontSize: 20, color: '#ef4444' }} /> },
+  { label: 'Admin Notifications',   icon: <AdminPanelSettings   sx={{ fontSize: 20, color: '#ef4444' }} /> },
+  { label: 'Employee Feedbacks',    icon: <Feedback             sx={{ fontSize: 20, color: '#ef4444' }} /> },
+  { label: 'Send Email',             icon: <Email                sx={{ fontSize: 20, color: '#ef4444' }} /> },
 ];
 
 const navItems = [
-  { label: 'Dashboard', icon: Dashboard },
+  { label: 'Dashboard',            icon: Dashboard          },
+  { label: 'Send Notification',    icon: Send               },
+  { label: 'Sent Notifications',   icon: History            },
+  { label: 'Admin Notifications',  icon: AdminPanelSettings },
+  { label: 'Employee Feedbacks',   icon: Feedback           },
+  { label: 'Send Email',           icon: Email              },
 ];
 
 const NotificationReportingDashboard = () => {
@@ -48,7 +68,20 @@ const NotificationReportingDashboard = () => {
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab]       = useState(0);
+  const [sentNotifications, setSentNotifications] = useState([]);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+
+  const handleNotificationSent = (notification) => {
+    setSentNotifications((prev) => [notification, ...prev]);
+  };
+
+  const handleDeleteNotification = (id) => {
+    setSentNotifications((prev) => prev.filter((n) => n.id !== id));
+  };
+
+  const handleEditNotification = (updated) => {
+    setSentNotifications((prev) => prev.map((n) => (n.id === updated.id ? updated : n)));
+  };
   const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
   const [showPasswords, setShowPasswords] = useState({ current: false, new: false, confirm: false });
   const [passwordError, setPasswordError]   = useState('');
@@ -209,6 +242,24 @@ const NotificationReportingDashboard = () => {
 
         {/* Pages */}
         {activeTab === 0 && <NotificationReportingDashboardHome />}
+        {activeTab === 1 && (
+          <SendNotificationForm
+            onNotificationSent={(notif) => {
+              handleNotificationSent(notif);
+              setActiveTab(2);
+            }}
+          />
+        )}
+        {activeTab === 2 && (
+          <SentNotificationsList
+            notifications={sentNotifications}
+            onDelete={handleDeleteNotification}
+            onEdit={handleEditNotification}
+          />
+        )}
+        {activeTab === 3 && <AdminNotificationsPage />}
+        {activeTab === 4 && <EmployeeFeedbacksView />}
+        {activeTab === 5 && <SendEmailForm />}
       </Box>
 
       {/* ── Change Password Dialog ── */}
