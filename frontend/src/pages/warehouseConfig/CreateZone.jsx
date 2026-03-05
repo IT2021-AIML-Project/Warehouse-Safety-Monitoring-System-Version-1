@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Snackbar, Alert } from '@mui/material';
 import {
   Inventory,
@@ -14,10 +14,10 @@ import {
 import '../../styles/formStyles.css';
 
 const zoneTypes = [
-  { value: 'Storage',    label: 'Storage',    desc: 'General storage space',   icon: <Inventory sx={{ fontSize: 26, color: '#1d4ed8' }} />,  bg: '#dbeafe', color: '#1d4ed8' },
-  { value: 'Loading',    label: 'Loading',    desc: 'Loading & unloading dock', icon: <LocalShipping sx={{ fontSize: 26, color: '#a16207' }} />, bg: '#fef9c3', color: '#a16207' },
-  { value: 'Restricted', label: 'Restricted', desc: 'Restricted access area',  icon: <Block sx={{ fontSize: 26, color: '#dc2626' }} />,      bg: '#fee2e2', color: '#dc2626' },
-  { value: 'Packing',    label: 'Packing',    desc: 'Order packing station',   icon: <AllInbox sx={{ fontSize: 26, color: '#16a34a' }} />,   bg: '#dcfce7', color: '#16a34a' },
+  { value: 'Storage', label: 'Storage', desc: 'General storage space', icon: <Inventory sx={{ fontSize: 26, color: '#1d4ed8' }} />, bg: '#dbeafe', color: '#1d4ed8' },
+  { value: 'Loading', label: 'Loading', desc: 'Loading & unloading dock', icon: <LocalShipping sx={{ fontSize: 26, color: '#a16207' }} />, bg: '#fef9c3', color: '#a16207' },
+  { value: 'Restricted', label: 'Restricted', desc: 'Restricted access area', icon: <Block sx={{ fontSize: 26, color: '#dc2626' }} />, bg: '#fee2e2', color: '#dc2626' },
+  { value: 'Packing', label: 'Packing', desc: 'Order packing station', icon: <AllInbox sx={{ fontSize: 26, color: '#16a34a' }} />, bg: '#dcfce7', color: '#16a34a' },
 ];
 
 const CreateZone = () => {
@@ -33,9 +33,9 @@ const CreateZone = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!form.zoneId.trim())  newErrors.zoneId   = 'Zone ID is required';
+    if (!form.zoneId.trim()) newErrors.zoneId = 'Zone ID is required';
     if (!form.zoneName.trim()) newErrors.zoneName = 'Zone Name is required';
-    if (!form.zoneType)        newErrors.zoneType = 'Please select a Zone Type';
+    if (!form.zoneType) newErrors.zoneType = 'Please select a Zone Type';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -43,7 +43,6 @@ const CreateZone = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
-    console.log('Zone created:', form);
     setSnackbar({ open: true, message: 'Zone created successfully!', severity: 'success' });
     setForm({ zoneId: '', zoneName: '', zoneType: '', isActive: true });
     setErrors({});

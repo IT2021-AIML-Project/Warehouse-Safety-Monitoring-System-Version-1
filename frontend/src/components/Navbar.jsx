@@ -10,7 +10,7 @@ import {
   Badge,
 } from '@mui/material';
 import {
-  Shield,
+  Security,
   ExitToApp,
   AccountCircle,
   Dashboard,
@@ -90,21 +90,10 @@ const Navbar = ({
         }}
       >
         {/* Logo */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Box
-            sx={{
-              width: 54, height: 54, borderRadius: '12px',
-              background: 'linear-gradient(135deg, #1e293b 0%, #1d4ed8 100%)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              flexShrink: 0,
-            }}
-          >
-            <Shield sx={{ color: '#fff', fontSize: 28 }} />
-          </Box>
-          {/* Vertical divider line */}
-          <Box sx={{ width: '1px', height: 44, backgroundColor: '#cbd5e1', mx: 0.5 }} />
-          <Typography sx={{ fontWeight: 800, color: '#1e293b', fontSize: '26px', letterSpacing: '-0.3px' }}>
-            Safety<Box component="span" sx={{ color: '#1d4ed8' }}>First</Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Security sx={{ color: '#1976D2', fontSize: 32 }} />
+          <Typography sx={{ fontWeight: 700, color: '#1976D2', fontSize: '24px' }}>
+            SafetyFirst
           </Typography>
         </Box>
 

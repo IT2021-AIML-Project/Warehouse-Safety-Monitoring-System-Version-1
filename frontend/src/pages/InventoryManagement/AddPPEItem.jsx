@@ -51,7 +51,6 @@ const AddPPEItem = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
-    console.log('PPE item added:', form);
     setSnackbar({ open: true, message: `"${form.itemName}" added successfully!`, severity: 'success' });
     setForm({ itemId: '', itemName: '', categories: [], quantity: '', zone: '' });
     setErrors({});

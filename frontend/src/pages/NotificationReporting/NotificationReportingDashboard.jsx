@@ -24,7 +24,6 @@ import {
   ExitToApp,
   Lock,
   Person,
-  Dashboard,
   Close,
   Visibility as VisibilityIcon,
   VisibilityOff,
@@ -36,7 +35,6 @@ import {
   Email,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import NotificationReportingDashboardHome from './NotificationReportingDashboardHome';
 import SendNotificationForm from './SendNotificationForm';
 import SentNotificationsList from './SentNotificationsList';
 import AdminNotificationsPage from './AdminNotificationsPage';
@@ -45,29 +43,19 @@ import SendEmailForm from './SendEmailForm';
 
 const drawerWidth = 260;
 
-const pageMeta = [
-  { label: 'Dashboard',             icon: <Dashboard            sx={{ fontSize: 20, color: '#ef4444' }} /> },
-  { label: 'Send Notification',     icon: <Send                 sx={{ fontSize: 20, color: '#ef4444' }} /> },
-  { label: 'Sent Notifications',    icon: <History              sx={{ fontSize: 20, color: '#ef4444' }} /> },
-  { label: 'Admin Notifications',   icon: <AdminPanelSettings   sx={{ fontSize: 20, color: '#ef4444' }} /> },
-  { label: 'Employee Feedbacks',    icon: <Feedback             sx={{ fontSize: 20, color: '#ef4444' }} /> },
-  { label: 'Send Email',             icon: <Email                sx={{ fontSize: 20, color: '#ef4444' }} /> },
-];
-
 const navItems = [
-  { label: 'Dashboard',            icon: Dashboard          },
-  { label: 'Send Notification',    icon: Send               },
-  { label: 'Sent Notifications',   icon: History            },
-  { label: 'Admin Notifications',  icon: AdminPanelSettings },
-  { label: 'Employee Feedbacks',   icon: Feedback           },
-  { label: 'Send Email',           icon: Email              },
+  { label: 'Send Notification',   icon: Send               },
+  { label: 'Sent Notifications',  icon: History            },
+  { label: 'Admin Notifications', icon: AdminPanelSettings },
+  { label: 'Employee Feedbacks',  icon: Feedback           },
+  { label: 'Send Email',          icon: Email              },
 ];
 
 const NotificationReportingDashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab]       = useState(0);
+  const [activeTab, setActiveTab]       = useState(0); // 0 = Send Notification
   const [sentNotifications, setSentNotifications] = useState([]);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
@@ -222,11 +210,8 @@ const NotificationReportingDashboard = () => {
         <AppBar position="sticky" elevation={0} sx={{ backgroundColor: '#ffffff', borderBottom: '1px solid #e2e8f0', zIndex: 1 }}>
           <Toolbar sx={{ justifyContent: 'space-between', minHeight: '64px !important', px: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <Box sx={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {pageMeta[activeTab]?.icon}
-              </Box>
               <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e293b', fontSize: '18px' }}>
-                {pageMeta[activeTab]?.label}
+                {navItems[activeTab]?.label}
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -241,25 +226,24 @@ const NotificationReportingDashboard = () => {
         </AppBar>
 
         {/* Pages */}
-        {activeTab === 0 && <NotificationReportingDashboardHome />}
-        {activeTab === 1 && (
+        {activeTab === 0 && (
           <SendNotificationForm
             onNotificationSent={(notif) => {
               handleNotificationSent(notif);
-              setActiveTab(2);
+              setActiveTab(1);
             }}
           />
         )}
-        {activeTab === 2 && (
+        {activeTab === 1 && (
           <SentNotificationsList
             notifications={sentNotifications}
             onDelete={handleDeleteNotification}
             onEdit={handleEditNotification}
           />
         )}
-        {activeTab === 3 && <AdminNotificationsPage />}
-        {activeTab === 4 && <EmployeeFeedbacksView />}
-        {activeTab === 5 && <SendEmailForm />}
+        {activeTab === 2 && <AdminNotificationsPage />}
+        {activeTab === 3 && <EmployeeFeedbacksView />}
+        {activeTab === 4 && <SendEmailForm />}
       </Box>
 
       {/* ── Change Password Dialog ── */}

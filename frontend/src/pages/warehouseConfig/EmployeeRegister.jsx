@@ -26,7 +26,7 @@ const EmployeeRegister = () => {
   const validate = () => {
     const newErrors = {};
     if (!form.employeeId.trim()) newErrors.employeeId = 'Employee ID is required';
-    if (!form.name.trim())       newErrors.name       = 'Full name is required';
+    if (!form.name.trim()) newErrors.name = 'Full name is required';
     if (!form.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
@@ -49,7 +49,6 @@ const EmployeeRegister = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
-    console.log('Employee registered:', form);
     setSnackbar({ open: true, message: `Employee "${form.name}" registered successfully!`, severity: 'success' });
     setForm({ employeeId: '', name: '', email: '', password: '' });
     setErrors({});
