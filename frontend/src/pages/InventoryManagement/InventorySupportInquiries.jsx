@@ -32,51 +32,20 @@ import {
   Inventory2,
 } from '@mui/icons-material';
 
-// ─── Dummy incoming inquiries ─────────────────────────────────────────────────
-const initialInquiries = [
-  {
-    id: 'INQ-001',
-    subject: 'PPE Restock Request',
-    category: 'Restock',
-    status: 'Open',
-    date: 'Feb 20, 2026',
-    submittedBy: 'John Dela Cruz',
-    message: 'Safety gloves (PPE-003) are critically low — only 12 units remain. Urgent restock needed.',
-    response: '',
-  },
-  {
-    id: 'INQ-002',
-    subject: 'Damaged Item Report',
-    category: 'Damage',
-    status: 'Resolved',
-    date: 'Feb 15, 2026',
-    submittedBy: 'Maria Santos',
-    message: 'Several steel-toe boots in ZONE-003 were found damaged and removed from inventory.',
-    response: 'Thank you for the report. We have filed a damage record and initiated a replacement order for the affected items in ZONE-003.',
-  },
-  {
-    id: 'INQ-003',
-    subject: 'Zone Assignment Confusion',
-    category: 'Zones',
-    status: 'Pending',
-    date: 'Feb 10, 2026',
-    submittedBy: 'Carlos Reyes',
-    message: 'Items in Storage Block A do not match the zone assignment records in the system.',
-    response: '',
-  },
-];
+// Inquiries data (replace with API data)
+const initialInquiries = [];
 
 const faqs = [
-  { q: 'How should I handle urgent restock requests?',         a: 'Mark the inquiry as Pending immediately and coordinate with the procurement team. Update the status to Resolved once the restock has been confirmed and processed.' },
-  { q: 'What steps follow a Damaged Item Report?',            a: 'Log the damage in the inventory system, remove the affected items from active inventory, and initiate a replacement order. Respond to the inquiry with a summary of actions taken.' },
-  { q: 'How do I resolve Zone Assignment discrepancies?',     a: 'Cross-check the system records with the physical inventory in the zone. Correct any mismatches in the system, then notify the employee and update the inquiry status.' },
-  { q: 'Who should I escalate unresolvable inquiries to?',   a: 'Escalate to the Warehouse Operations Manager. Attach all relevant photos, zone logs, and inventory records before escalating.' },
-  { q: 'What is the target response time for inquiries?',    a: 'All open inquiries should receive an initial response within 24 hours. Restock and damage inquiries require resolution within 48 hours.' },
+  { q: 'How should I handle urgent restock requests?', a: 'Mark the inquiry as Pending immediately and coordinate with the procurement team. Update the status to Resolved once the restock has been confirmed and processed.' },
+  { q: 'What steps follow a Damaged Item Report?', a: 'Log the damage in the inventory system, remove the affected items from active inventory, and initiate a replacement order. Respond to the inquiry with a summary of actions taken.' },
+  { q: 'How do I resolve Zone Assignment discrepancies?', a: 'Cross-check the system records with the physical inventory in the zone. Correct any mismatches in the system, then notify the employee and update the inquiry status.' },
+  { q: 'Who should I escalate unresolvable inquiries to?', a: 'Escalate to the Warehouse Operations Manager. Attach all relevant photos, zone logs, and inventory records before escalating.' },
+  { q: 'What is the target response time for inquiries?', a: 'All open inquiries should receive an initial response within 24 hours. Restock and damage inquiries require resolution within 48 hours.' },
 ];
 
 const statusStyle = {
-  Open:     { bg: '#dbeafe', color: '#1d4ed8', icon: <HourglassEmpty    sx={{ fontSize: 14 }} /> },
-  Pending:  { bg: '#fef9c3', color: '#a16207', icon: <WarningAmber       sx={{ fontSize: 14 }} /> },
+  Open: { bg: '#dbeafe', color: '#1d4ed8', icon: <HourglassEmpty sx={{ fontSize: 14 }} /> },
+  Pending: { bg: '#fef9c3', color: '#a16207', icon: <WarningAmber sx={{ fontSize: 14 }} /> },
   Resolved: { bg: '#dcfce7', color: '#16a34a', icon: <CheckCircleOutline sx={{ fontSize: 14 }} /> },
 };
 
@@ -84,11 +53,11 @@ const statusOptions = ['Open', 'Pending', 'Resolved'];
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const InventorySupportInquiries = () => {
-  const [activeTab, setActiveTab]     = useState('inquiries');
-  const [inquiries, setInquiries]     = useState(initialInquiries);
+  const [activeTab, setActiveTab] = useState('inquiries');
+  const [inquiries, setInquiries] = useState(initialInquiries);
   const [selectedInq, setSelectedInq] = useState(null);
-  const [replyText, setReplyText]     = useState('');
-  const [newStatus, setNewStatus]     = useState('');
+  const [replyText, setReplyText] = useState('');
+  const [newStatus, setNewStatus] = useState('');
 
   const openDialog = (inq) => {
     setSelectedInq(inq);
@@ -113,8 +82,8 @@ const InventorySupportInquiries = () => {
     closeDialog();
   };
 
-  const openCount   = inquiries.filter((i) => i.status === 'Open').length;
-  const pendCount   = inquiries.filter((i) => i.status === 'Pending').length;
+  const openCount = inquiries.filter((i) => i.status === 'Open').length;
+  const pendCount = inquiries.filter((i) => i.status === 'Pending').length;
   const resolveCount = inquiries.filter((i) => i.status === 'Resolved').length;
 
   return (
@@ -150,8 +119,8 @@ const InventorySupportInquiries = () => {
       {/* ── Summary chips ── */}
       <Box sx={{ display: 'flex', gap: 1.5, mb: 3, flexWrap: 'wrap' }}>
         {[
-          { label: `${openCount} Open`,     bg: '#dbeafe', color: '#1d4ed8' },
-          { label: `${pendCount} Pending`,  bg: '#fef9c3', color: '#a16207' },
+          { label: `${openCount} Open`, bg: '#dbeafe', color: '#1d4ed8' },
+          { label: `${pendCount} Pending`, bg: '#fef9c3', color: '#a16207' },
           { label: `${resolveCount} Resolved`, bg: '#dcfce7', color: '#16a34a' },
         ].map((c) => (
           <Chip key={c.label} label={c.label} sx={{ fontWeight: 700, fontSize: '13px', backgroundColor: c.bg, color: c.color, border: 'none', px: 0.5 }} />
@@ -162,7 +131,7 @@ const InventorySupportInquiries = () => {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 3, borderBottom: '2px solid #e2e8f0', pb: '1px' }}>
         {[
           { key: 'inquiries', label: 'My Inquiries', icon: <FormatListBulleted sx={{ fontSize: 18 }} /> },
-          { key: 'faq',       label: 'FAQ',           icon: <HelpOutline        sx={{ fontSize: 18 }} /> },
+          { key: 'faq', label: 'FAQ', icon: <HelpOutline sx={{ fontSize: 18 }} /> },
         ].map((tab) => {
           const active = activeTab === tab.key;
           return (
@@ -216,7 +185,7 @@ const InventorySupportInquiries = () => {
                       '&:hover': { borderColor: '#86efac', boxShadow: '0 4px 16px rgba(22,163,74,0.08)' },
                       transition: 'all 0.15s',
                       ...(inq.status === 'Pending' ? { borderLeft: '4px solid #eab308' } : {}),
-                      ...(inq.status === 'Open'    ? { borderLeft: '4px solid #3b82f6' } : {}),
+                      ...(inq.status === 'Open' ? { borderLeft: '4px solid #3b82f6' } : {}),
                       ...(inq.status === 'Resolved' ? { borderLeft: '4px solid #16a34a' } : {}),
                     }}
                   >

@@ -19,23 +19,9 @@ import {
   Inventory,
 } from '@mui/icons-material';
 
-// ── Dummy Data ─────────────────────────────────────────────────
-const dummyPPEItems = [
-  { id: 'PPE-001', name: 'Safety Helmet', category: 'Head Protection', quantity: 120, status: 'In Stock', zone: 'ZONE-001' },
-  { id: 'PPE-002', name: 'Safety Vest', category: 'Body Protection', quantity: 85, status: 'In Stock', zone: 'ZONE-002' },
-  { id: 'PPE-003', name: 'Safety Gloves', category: 'Hand Protection', quantity: 12, status: 'Low Stock', zone: 'ZONE-001' },
-  { id: 'PPE-004', name: 'Steel-Toe Boots', category: 'Foot Protection', quantity: 0, status: 'Out of Stock', zone: 'ZONE-003' },
-  { id: 'PPE-005', name: 'Safety Goggles', category: 'Eye Protection', quantity: 55, status: 'In Stock', zone: 'ZONE-002' },
-  { id: 'PPE-006', name: 'Ear Muffs', category: 'Ear Protection', quantity: 8, status: 'Low Stock', zone: 'ZONE-004' },
-  { id: 'PPE-007', name: 'High-Vis Jacket', category: 'Body Protection', quantity: 200, status: 'In Stock', zone: 'ZONE-001' },
-];
-
-const dummyZones = [
-  { id: 'ZONE-001', name: 'Storage Block A', items: 3, employees: 3, status: 'Active' },
-  { id: 'ZONE-002', name: 'Loading Dock 1', items: 2, employees: 0, status: 'Active' },
-  { id: 'ZONE-003', name: 'Packing Station B', items: 1, employees: 0, status: 'Active' },
-  { id: 'ZONE-004', name: 'Restricted Area North', items: 1, employees: 1, status: 'Active' },
-];
+// Data arrays (replace with API data)
+const dummyPPEItems = [];
+const dummyZones = [];
 
 // ── Helpers ─────────────────────────────────────────────────────
 const statusColorMap = {

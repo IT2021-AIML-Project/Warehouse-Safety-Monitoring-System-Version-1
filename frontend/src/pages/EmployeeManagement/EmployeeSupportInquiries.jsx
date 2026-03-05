@@ -30,12 +30,8 @@ import {
   DeleteOutline,
 } from '@mui/icons-material';
 
-// ─── Dummy data ───────────────────────────────────────────────────────────────
-const sampleInquiries = [
-  { id: 'INQ-001', subject: 'PPE Replacement Request', category: 'Equipment', status: 'Open', date: 'Feb 20, 2026', message: 'My safety helmet has a crack and needs urgent replacement.' },
-  { id: 'INQ-002', subject: 'Zone Access Issue', category: 'Access', status: 'Resolved', date: 'Feb 15, 2026', message: 'I was unable to access Storage Block B during my shift.' },
-  { id: 'INQ-003', subject: 'Safety Drill Query', category: 'Training', status: 'Pending', date: 'Feb 10, 2026', message: 'When is the next mandatory safety drill scheduled?' },
-];
+// Inquiries data (replace with API data)
+const sampleInquiries = [];
 
 const faqs = [
   { q: 'How do I request replacement PPE?', a: 'Submit a new inquiry under the "Equipment" category. Your supervisor will be notified and process the request within 24 hours.' },

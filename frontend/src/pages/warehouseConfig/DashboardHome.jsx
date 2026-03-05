@@ -24,27 +24,9 @@ import {
   Block,
 } from '@mui/icons-material';
 
-// ── Shared dummy data ──────────────────────────────────────────
-const dummyZones = [
-  { id: 'ZONE-001', name: 'Storage Block A', type: 'Storage', status: 'Active', created: '2024-01-10' },
-  { id: 'ZONE-002', name: 'Loading Dock 1', type: 'Loading', status: 'Active', created: '2024-01-12' },
-  { id: 'ZONE-003', name: 'Packing Station B', type: 'Packing', status: 'Active', created: '2024-02-05' },
-  { id: 'ZONE-004', name: 'Restricted Area North', type: 'Restricted', status: 'Active', created: '2024-02-20' },
-  { id: 'ZONE-005', name: 'Storage Block B', type: 'Storage', status: 'Inactive', created: '2024-03-11' },
-  { id: 'ZONE-006', name: 'Loading Dock 2', type: 'Loading', status: 'Active', created: '2024-04-18' },
-  { id: 'ZONE-007', name: 'Packing Station C', type: 'Packing', status: 'Inactive', created: '2024-06-01' },
-  { id: 'ZONE-008', name: 'Restricted Area South', type: 'Restricted', status: 'Active', created: '2024-07-22' },
-];
-
-const dummyEmployees = [
-  { id: 'EMP-0001', name: 'James Carter', email: 'james.carter@warehouse.com', role: 'Warehouse Staff', status: 'Active', joined: '2024-03-10' },
-  { id: 'EMP-0002', name: 'Maria Santos', email: 'maria.santos@warehouse.com', role: 'Warehouse Staff', status: 'Active', joined: '2024-05-22' },
-  { id: 'EMP-0003', name: 'David Kim', email: 'david.kim@warehouse.com', role: 'Supervisor', status: 'Active', joined: '2023-11-01' },
-  { id: 'EMP-0004', name: 'Priya Patel', email: 'priya.patel@warehouse.com', role: 'Warehouse Staff', status: 'Inactive', joined: '2024-01-15' },
-  { id: 'EMP-0005', name: 'Lucas Mendes', email: 'lucas.mendes@warehouse.com', role: 'Forklift Operator', status: 'Active', joined: '2024-07-08' },
-  { id: 'EMP-0006', name: 'Aisha Nkosi', email: 'aisha.nkosi@warehouse.com', role: 'Warehouse Staff', status: 'Active', joined: '2024-09-19' },
-  { id: 'EMP-0007', name: 'Tom Bradley', email: 'tom.bradley@warehouse.com', role: 'Loading Staff', status: 'Inactive', joined: '2023-08-30' },
-];
+// Data arrays (replace with API data)
+const dummyZones = [];
+const dummyEmployees = [];
 
 // ── Helpers ────────────────────────────────────────────────────
 const typeColorMap = {

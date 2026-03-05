@@ -40,37 +40,20 @@ import {
 
 // ── Severity config ──────────────────────────────────────────────────────────
 const SEVERITIES = [
-  { value: 'info',    label: 'Info',    color: '#1d4ed8', bg: '#dbeafe', icon: InfoOutlined   },
-  { value: 'warning', label: 'Warning', color: '#a16207', bg: '#fef9c3', icon: WarningAmber   },
-  { value: 'danger',  label: 'Alert',   color: '#dc2626', bg: '#fee2e2', icon: ErrorOutline   },
-  { value: 'success', label: 'Success', color: '#16a34a', bg: '#dcfce7', icon: TaskAlt        },
+  { value: 'info', label: 'Info', color: '#1d4ed8', bg: '#dbeafe', icon: InfoOutlined },
+  { value: 'warning', label: 'Warning', color: '#a16207', bg: '#fef9c3', icon: WarningAmber },
+  { value: 'danger', label: 'Alert', color: '#dc2626', bg: '#fee2e2', icon: ErrorOutline },
+  { value: 'success', label: 'Success', color: '#16a34a', bg: '#dcfce7', icon: TaskAlt },
 ];
 
-// ── Mock employee list (replace with API call if backend is ready) ────────────
-const MOCK_EMPLOYEES = [
-  { id: 'emp-1', name: 'Juan Dela Cruz',   role: 'Warehouse Worker',  zone: 'Zone A' },
-  { id: 'emp-2', name: 'Maria Santos',     role: 'Safety Officer',    zone: 'Zone B' },
-  { id: 'emp-3', name: 'Pedro Reyes',      role: 'Forklift Operator', zone: 'Zone A' },
-  { id: 'emp-4', name: 'Ana Gonzales',     role: 'Inventory Clerk',   zone: 'Zone C' },
-  { id: 'emp-5', name: 'Lito Fernandez',   role: 'Warehouse Worker',  zone: 'Zone B' },
-  { id: 'emp-6', name: 'Rosa Bautista',    role: 'Supervisor',        zone: 'Zone A' },
-  { id: 'emp-7', name: 'Carlo Mendoza',    role: 'Forklift Operator', zone: 'Zone C' },
-  { id: 'emp-8', name: 'Nina Villanueva',  role: 'Warehouse Worker',  zone: 'Zone D' },
-  { id: 'emp-9', name: 'Ricky Soriano',   role: 'Safety Officer',    zone: 'Zone D' },
-];
-
-// ── Zone definitions ──────────────────────────────────────────────────────────
-const ZONES = [
-  { id: 'Zone A', label: 'Zone A', color: '#1d4ed8', bg: '#dbeafe', border: '#93c5fd', lightBg: '#eff6ff', description: 'Storage Block A' },
-  { id: 'Zone B', label: 'Zone B', color: '#7c3aed', bg: '#ede9fe', border: '#c4b5fd', lightBg: '#f5f3ff', description: 'Storage Block B' },
-  { id: 'Zone C', label: 'Zone C', color: '#b45309', bg: '#fef3c7', border: '#fcd34d', lightBg: '#fffbeb', description: 'Storage Block C' },
-  { id: 'Zone D', label: 'Zone D', color: '#0f766e', bg: '#ccfbf1', border: '#5eead4', lightBg: '#f0fdfa', description: 'Storage Block D' },
-];
+// Employee and zone data (replace with API data)
+const MOCK_EMPLOYEES = [];
+const ZONES = [];
 
 const RECIPIENT_MODES = [
-  { key: 'individual', label: 'Specific Employees', icon: PersonAdd  },
-  { key: 'zone',       label: 'By Zone',             icon: LocationOn },
-  { key: 'all',        label: 'All Employees',        icon: Group      },
+  { key: 'individual', label: 'Specific Employees', icon: PersonAdd },
+  { key: 'zone', label: 'By Zone', icon: LocationOn },
+  { key: 'all', label: 'All Employees', icon: Group },
 ];
 
 // ── Allowed file types ────────────────────────────────────────────────────────
@@ -82,15 +65,15 @@ const MAX_FILE_SIZE_MB = 10;
 const MAX_FILES = 5;
 
 const getFileIcon = (type) => {
-  if (type === 'application/pdf')   return PictureAsPdf;
-  if (type.startsWith('image/'))    return ImageIcon;
+  if (type === 'application/pdf') return PictureAsPdf;
+  if (type.startsWith('image/')) return ImageIcon;
   return InsertDriveFile;
 };
 
 const getFileColor = (type) => {
-  if (type === 'application/pdf')  return { color: '#dc2626', bg: '#fff1f2', border: '#fecaca' };
-  if (type.startsWith('image/'))   return { color: '#7c3aed', bg: '#f5f3ff', border: '#c4b5fd' };
-  return                                  { color: '#0f766e', bg: '#f0fdfa', border: '#5eead4' };
+  if (type === 'application/pdf') return { color: '#dc2626', bg: '#fff1f2', border: '#fecaca' };
+  if (type.startsWith('image/')) return { color: '#7c3aed', bg: '#f5f3ff', border: '#c4b5fd' };
+  return { color: '#0f766e', bg: '#f0fdfa', border: '#5eead4' };
 };
 
 const formatBytes = (bytes) => {
@@ -110,22 +93,22 @@ const initForm = {
 
 // ── Component ────────────────────────────────────────────────────────────────
 const SendNotificationForm = ({ onNotificationSent }) => {
-  const [form, setForm]                     = useState(initForm);
-  const [attachments, setAttachments]       = useState([]);
-  const [attachError, setAttachError]       = useState('');
-  const [dragOver, setDragOver]             = useState(false);
+  const [form, setForm] = useState(initForm);
+  const [attachments, setAttachments] = useState([]);
+  const [attachError, setAttachError] = useState('');
+  const [dragOver, setDragOver] = useState(false);
   const [employeeSearch, setEmployeeSearch] = useState('');
-  const [successMsg, setSuccessMsg]         = useState('');
-  const [errors, setErrors]                 = useState({});
-  const [expandedZones, setExpandedZones]   = useState({});
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errors, setErrors] = useState({});
+  const [expandedZones, setExpandedZones] = useState({});
   const fileInputRef = useRef(null);
 
   // ── File helpers ──
   const processFiles = (rawFiles) => {
     setAttachError('');
     const incoming = Array.from(rawFiles);
-    const results  = [];
-    const errs     = [];
+    const results = [];
+    const errs = [];
 
     for (const file of incoming) {
       if (!ALLOWED_TYPES.includes(file.type)) {
@@ -196,7 +179,7 @@ const SendNotificationForm = ({ onNotificationSent }) => {
   // ── Validation ──
   const validate = () => {
     const errs = {};
-    if (!form.title.trim())   errs.title = 'Title is required.';
+    if (!form.title.trim()) errs.title = 'Title is required.';
     if (!form.message.trim()) errs.message = 'Message is required.';
     if (form.recipientMode === 'individual' && form.selectedEmployees.length === 0)
       errs.recipients = 'Select at least one employee.';
@@ -211,8 +194,8 @@ const SendNotificationForm = ({ onNotificationSent }) => {
     if (!validate()) return;
 
     let recipients;
-    if (form.recipientMode === 'all')        recipients = MOCK_EMPLOYEES;
-    else if (form.recipientMode === 'zone')  recipients = zoneRecipients;
+    if (form.recipientMode === 'all') recipients = MOCK_EMPLOYEES;
+    else if (form.recipientMode === 'zone') recipients = zoneRecipients;
     else recipients = MOCK_EMPLOYEES.filter((e) => form.selectedEmployees.includes(e.id));
 
     const notification = {
@@ -234,8 +217,8 @@ const SendNotificationForm = ({ onNotificationSent }) => {
       form.recipientMode === 'all'
         ? 'all employees'
         : form.recipientMode === 'zone'
-        ? `${recipients.length} employee${recipients.length !== 1 ? 's' : ''} across ${form.selectedZones.length} zone${form.selectedZones.length !== 1 ? 's' : ''}`
-        : `${recipients.length} employee${recipients.length !== 1 ? 's' : ''}`;
+          ? `${recipients.length} employee${recipients.length !== 1 ? 's' : ''} across ${form.selectedZones.length} zone${form.selectedZones.length !== 1 ? 's' : ''}`
+          : `${recipients.length} employee${recipients.length !== 1 ? 's' : ''}`;
 
     setSuccessMsg(`Notification sent to ${label} successfully!`);
     setForm(initForm);
@@ -826,10 +809,10 @@ const SendNotificationForm = ({ onNotificationSent }) => {
             form.recipientMode === 'all'
               ? `Send to all ${MOCK_EMPLOYEES.length} employees`
               : form.recipientMode === 'zone' && form.selectedZones.length > 0
-              ? `Send to ${zoneRecipients.length} employee${zoneRecipients.length !== 1 ? 's' : ''} across ${form.selectedZones.length} zone${form.selectedZones.length !== 1 ? 's' : ''}`
-              : form.selectedEmployees.length > 0
-              ? `Send to ${form.selectedEmployees.length} employee${form.selectedEmployees.length > 1 ? 's' : ''}`
-              : 'Select recipients first'
+                ? `Send to ${zoneRecipients.length} employee${zoneRecipients.length !== 1 ? 's' : ''} across ${form.selectedZones.length} zone${form.selectedZones.length !== 1 ? 's' : ''}`
+                : form.selectedEmployees.length > 0
+                  ? `Send to ${form.selectedEmployees.length} employee${form.selectedEmployees.length > 1 ? 's' : ''}`
+                  : 'Select recipients first'
           }>
             <span>
               <Button

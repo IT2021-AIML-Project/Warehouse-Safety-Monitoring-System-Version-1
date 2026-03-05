@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import {
   Box,
   Typography,
@@ -21,19 +21,8 @@ import {
   VerifiedUser,
 } from '@mui/icons-material';
 
-// â”€â”€â”€ Dummy assigned data (replace with API later) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const myZones = [
-  {
-    id: 'ZONE-001',
-    name: 'Storage Block A',
-    status: 'Active',
-    ppeItems: [
-      { name: 'Safety Helmet',  category: 'Head Protection', quantity: 120, status: 'In Stock',  serialId: 'SN-HLM-00421', assignedDate: '2026-01-10', condition: 'Good'      },
-      { name: 'Safety Boots',   category: 'Foot Protection', quantity: 12,  status: 'Low Stock', serialId: 'SN-BOT-00157', assignedDate: '2026-01-15', condition: 'Fair'      },
-      { name: 'High-Vis Jacket',category: 'Body Protection', quantity: 200, status: 'In Stock',  serialId: 'SN-JKT-00893', assignedDate: '2026-02-01', condition: 'Excellent' },
-    ],
-  },
-];
+// Assigned zones data (replace with API data)
+const myZones = [];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 const statusColorMap = {

@@ -23,16 +23,8 @@ import {
 } from '@mui/material';
 import { Search, ViewList, Edit, Delete, WarningAmber, Close } from '@mui/icons-material';
 
-const dummyZones = [
-  { id: 'ZONE-001', name: 'Storage Block A', type: 'Storage', status: 'Active', created: '2024-01-10' },
-  { id: 'ZONE-002', name: 'Loading Dock 1', type: 'Loading', status: 'Active', created: '2024-01-12' },
-  { id: 'ZONE-003', name: 'Packing Station B', type: 'Packing', status: 'Active', created: '2024-02-05' },
-  { id: 'ZONE-004', name: 'Restricted Area North', type: 'Restricted', status: 'Active', created: '2024-02-20' },
-  { id: 'ZONE-005', name: 'Storage Block B', type: 'Storage', status: 'Inactive', created: '2024-03-11' },
-  { id: 'ZONE-006', name: 'Loading Dock 2', type: 'Loading', status: 'Active', created: '2024-04-18' },
-  { id: 'ZONE-007', name: 'Packing Station C', type: 'Packing', status: 'Inactive', created: '2024-06-01' },
-  { id: 'ZONE-008', name: 'Restricted Area South', type: 'Restricted', status: 'Active', created: '2024-07-22' },
-];
+// Data array (replace with API data)
+const dummyZones = [];
 
 const typeColorMap = {
   Storage: { bg: '#dbeafe', color: '#1d4ed8' },

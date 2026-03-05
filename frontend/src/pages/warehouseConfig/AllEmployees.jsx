@@ -25,15 +25,8 @@ import {
 } from '@mui/material';
 import { Search, People, Edit, Delete, Close, WarningAmber } from '@mui/icons-material';
 
-const dummyEmployees = [
-  { id: 'EMP-0001', name: 'James Carter', email: 'james.carter@warehouse.com', role: 'Warehouse Staff', status: 'Active', joined: '2024-03-10' },
-  { id: 'EMP-0002', name: 'Maria Santos', email: 'maria.santos@warehouse.com', role: 'Warehouse Staff', status: 'Active', joined: '2024-05-22' },
-  { id: 'EMP-0003', name: 'David Kim', email: 'david.kim@warehouse.com', role: 'Supervisor', status: 'Active', joined: '2023-11-01' },
-  { id: 'EMP-0004', name: 'Priya Patel', email: 'priya.patel@warehouse.com', role: 'Warehouse Staff', status: 'Inactive', joined: '2024-01-15' },
-  { id: 'EMP-0005', name: 'Lucas Mendes', email: 'lucas.mendes@warehouse.com', role: 'Forklift Operator', status: 'Active', joined: '2024-07-08' },
-  { id: 'EMP-0006', name: 'Aisha Nkosi', email: 'aisha.nkosi@warehouse.com', role: 'Warehouse Staff', status: 'Active', joined: '2024-09-19' },
-  { id: 'EMP-0007', name: 'Tom Bradley', email: 'tom.bradley@warehouse.com', role: 'Loading Staff', status: 'Inactive', joined: '2023-08-30' },
-];
+// Data array (replace with API data)
+const dummyEmployees = [];
 
 const getInitials = (name) =>
   name.split(' ').map((n) => n[0]).join('').toUpperCase();

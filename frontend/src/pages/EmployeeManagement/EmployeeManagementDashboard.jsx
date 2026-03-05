@@ -38,14 +38,8 @@ import EmployeeSupportInquiries from './EmployeeSupportInquiries';
 import EmployeeNotificationsPage from './EmployeeNotificationsPage';
 import EmployeeFeedbackPage from './EmployeeFeedbackPage';
 
-const INITIAL_NOTIFICATIONS = [
-  { id: 1, title: 'PPE Inspection Required', message: 'Please inspect your assigned Safety Helmet before entering Zone A today.', time: '10 mins ago', severity: 'warning', read: false },
-  { id: 2, title: 'Low Stock Alert – Storage Block A', message: 'Safety Boots are running low (12 remaining). Contact your supervisor.', time: '1 hour ago', severity: 'danger', read: false },
-  { id: 3, title: 'New Zone Assignment', message: 'You have been assigned to Storage Block B effective tomorrow.', time: '3 hours ago', severity: 'info', read: false },
-  { id: 4, title: 'Safety Briefing Scheduled', message: 'Mandatory safety briefing on Feb 28 at 9:00 AM in the main hall.', time: '1 day ago', severity: 'info', read: false },
-  { id: 5, title: 'Incident Report Submitted', message: 'Your incident report from Feb 24 has been received and is under review.', time: '2 days ago', severity: 'success', read: true },
-  { id: 6, title: 'PPE Restocked – High-Vis Jackets', message: 'High-Vis Jackets have been restocked in all zones.', time: '3 days ago', severity: 'success', read: true },
-];
+// Notifications data (replace with API data)
+const INITIAL_NOTIFICATIONS = [];
 
 const EmployeeManagementDashboard = () => {
   const { user, logout } = useAuth();
@@ -168,7 +162,8 @@ const EmployeeManagementDashboard = () => {
           <Tooltip title="Click to change photo" placement="bottom">
             <Box
               onClick={() => photoInputRef.current.click()}
-              sx={{ position: 'relative', cursor: 'pointer', flexShrink: 0,
+              sx={{
+                position: 'relative', cursor: 'pointer', flexShrink: 0,
                 '&:hover .cam-overlay': { opacity: 1 },
               }}
             >
@@ -254,10 +249,10 @@ const EmployeeManagementDashboard = () => {
               )}
 
               {[
-                { icon: Person,   label: 'Full Name',   value: user?.fullName || user?.username || '—' },
-                { icon: Badge,    label: 'Employee ID', value: user?.employeeId || 'EMP-001' },
-                { icon: Email,    label: 'Email',       value: user?.email || 'employee@safetyfirst.lk' },
-                { icon: Business, label: 'Department',  value: user?.department || 'Warehouse Operations' },
+                { icon: Person, label: 'Full Name', value: user?.fullName || user?.username || '—' },
+                { icon: Badge, label: 'Employee ID', value: user?.employeeId || 'EMP-001' },
+                { icon: Email, label: 'Email', value: user?.email || 'employee@safetyfirst.lk' },
+                { icon: Business, label: 'Department', value: user?.department || 'Warehouse Operations' },
               ].map(({ icon: RowIcon, label, value }) => (
                 <Box key={label} sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 1.8, borderRadius: '12px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
                   <Box sx={{ width: 38, height: 38, borderRadius: '10px', backgroundColor: '#fef3c7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -347,7 +342,7 @@ const EmployeeManagementDashboard = () => {
 
               {[
                 { label: 'Current Password', key: 'current', show: showCurrent, toggle: () => setShowCurrent(!showCurrent) },
-                { label: 'New Password',     key: 'newPw',   show: showNew,     toggle: () => setShowNew(!showNew) },
+                { label: 'New Password', key: 'newPw', show: showNew, toggle: () => setShowNew(!showNew) },
                 { label: 'Confirm New Password', key: 'confirm', show: showConfirm, toggle: () => setShowConfirm(!showConfirm) },
               ].map(({ label, key, show, toggle }) => (
                 <TextField

@@ -43,57 +43,29 @@ import { AnalyticsView } from './AnalyticsView';
 
 const drawerWidth = 260;
 
-/* ─── Mock Data ─────────────────────────────────────────── */
-const INITIAL_VIOLATIONS = [
-  { id: 'VIO-001', date: '2026-02-27', employee: 'Juan Dela Cruz',  section: 'Storage Block A',      type: 'No Helmet',      confidence: 94, status: 'Pending'       },
-  { id: 'VIO-002', date: '2026-02-27', employee: 'Maria Santos',    section: 'Loading Dock 1',        type: 'No Safety Vest', confidence: 88, status: 'Verified'      },
-  { id: 'VIO-003', date: '2026-02-27', employee: 'Carlos Reyes',    section: 'Packing Station B',     type: 'No Gloves',      confidence: 91, status: 'Pending'       },
-  { id: 'VIO-004', date: '2026-02-27', employee: 'Ana Lopez',       section: 'Restricted Area North', type: 'No Helmet',      confidence: 97, status: 'Verified'      },
-  { id: 'VIO-005', date: '2026-02-26', employee: 'Pedro Garcia',    section: 'Storage Block A',       type: 'No Mask',        confidence: 85, status: 'False Positive'},
-];
-
+/* ─── Data defaults (replace with API data) ─────────────── */
 const DAILY_METRICS = {
-  violations: 4, complianceScore: 92, safetyScore: 93, totalPeople: 38,
+  violations: 0, complianceScore: 0, safetyScore: 0, totalPeople: 0,
 };
 const VIOLATION_BREAKDOWN = {
-  noHelmet: 2, noMask: 1, noSafetyVest: 1, noGloves: 1, noSafetyBoots: 0,
+  noHelmet: 0, noMask: 0, noSafetyVest: 0, noGloves: 0, noSafetyBoots: 0,
 };
 const MONTHLY_METRICS = {
-  violations: 47, avgComplianceScore: 91, avgSafetyScore: 92, totalPeople: 35,
+  violations: 0, avgComplianceScore: 0, avgSafetyScore: 0, totalPeople: 0,
 };
-const HOURLY_DATA = [
-  { hour: '9AM',  violations: 2,  complianceScore: 95 },
-  { hour: '10AM', violations: 1,  complianceScore: 97 },
-  { hour: '11AM', violations: 3,  complianceScore: 92 },
-  { hour: '12PM', violations: 0,  complianceScore: 100 },
-  { hour: '1PM',  violations: 4,  complianceScore: 89 },
-  { hour: '2PM',  violations: 2,  complianceScore: 94 },
-  { hour: '3PM',  violations: 1,  complianceScore: 97 },
-  { hour: '4PM',  violations: 3,  complianceScore: 91 },
-  { hour: '5PM',  violations: 0,  complianceScore: 100 },
-];
-const DAILY_DATA = [
-  { date: 'Feb 21', violations: 5,  complianceScore: 91, safetyScore: 92 },
-  { date: 'Feb 22', violations: 3,  complianceScore: 94, safetyScore: 95 },
-  { date: 'Feb 23', violations: 7,  complianceScore: 88, safetyScore: 89 },
-  { date: 'Feb 24', violations: 2,  complianceScore: 96, safetyScore: 97 },
-  { date: 'Feb 25', violations: 4,  complianceScore: 92, safetyScore: 93 },
-  { date: 'Feb 26', violations: 6,  complianceScore: 90, safetyScore: 91 },
-  { date: 'Feb 27', violations: 4,  complianceScore: 93, safetyScore: 93 },
-];
 
 const pageMeta = [
-  { label: 'View Violations',  icon: <Warning      sx={{ fontSize: 20, color: '#7c3aed' }} /> },
-  { label: 'Daily Reports',    icon: <AccessTime   sx={{ fontSize: 20, color: '#7c3aed' }} /> },
-  { label: 'Monthly Reports',  icon: <CalendarMonth sx={{ fontSize: 20, color: '#7c3aed' }} /> },
-  { label: 'Analytics',        icon: <ShowChart    sx={{ fontSize: 20, color: '#7c3aed' }} /> },
+  { label: 'View Violations', icon: <Warning sx={{ fontSize: 20, color: '#7c3aed' }} /> },
+  { label: 'Daily Reports', icon: <AccessTime sx={{ fontSize: 20, color: '#7c3aed' }} /> },
+  { label: 'Monthly Reports', icon: <CalendarMonth sx={{ fontSize: 20, color: '#7c3aed' }} /> },
+  { label: 'Analytics', icon: <ShowChart sx={{ fontSize: 20, color: '#7c3aed' }} /> },
 ];
 
 const navItems = [
-  { label: 'View Violations',  Icon: Warning       },
-  { label: 'Daily Reports',    Icon: AccessTime    },
-  { label: 'Monthly Reports',  Icon: CalendarMonth },
-  { label: 'Analytics',        Icon: ShowChart     },
+  { label: 'View Violations', Icon: Warning },
+  { label: 'Daily Reports', Icon: AccessTime },
+  { label: 'Monthly Reports', Icon: CalendarMonth },
+  { label: 'Analytics', Icon: ShowChart },
 ];
 
 const OperationsComplianceDashboard = () => {
@@ -108,7 +80,7 @@ const OperationsComplianceDashboard = () => {
   const [passwordSuccess, setPasswordSuccess] = useState('');
 
   // Violations state
-  const [violations, setViolations] = useState(INITIAL_VIOLATIONS);
+  const [violations, setViolations] = useState([]);
   const handleUpdateViolation = (updated) =>
     setViolations((prev) => prev.map((v) => (v.id === updated.id ? updated : v)));
   const handleDeleteViolation = (id) =>
@@ -225,7 +197,7 @@ const OperationsComplianceDashboard = () => {
         </Box>
 
         {/* Nav */}
-        <List sx={{ pt: 2 }}>          
+        <List sx={{ pt: 2 }}>
           {navItems.map((item, index) => {
             const { Icon } = item;
             const isSelected = activeTab === index;
@@ -346,8 +318,8 @@ const OperationsComplianceDashboard = () => {
           {/* Analytics */}
           {activeTab === 3 && (
             <AnalyticsView
-              hourlyData={HOURLY_DATA}
-              dailyData={DAILY_DATA}
+              hourlyData={[]}
+              dailyData={[]}
             />
           )}
         </Box>
@@ -360,11 +332,11 @@ const OperationsComplianceDashboard = () => {
           <IconButton onClick={handleChangePasswordClose} sx={{ color: '#64748b' }}><Close /></IconButton>
         </DialogTitle>
         <DialogContent sx={{ pt: 1 }}>
-          {passwordError   && <Alert severity="error"   sx={{ mb: 2 }}>{passwordError}</Alert>}
+          {passwordError && <Alert severity="error" sx={{ mb: 2 }}>{passwordError}</Alert>}
           {passwordSuccess && <Alert severity="success" sx={{ mb: 2 }}>{passwordSuccess}</Alert>}
           {[
-            { field: 'currentPassword', label: 'Current Password',     key: 'current' },
-            { field: 'newPassword',     label: 'New Password',         key: 'new'     },
+            { field: 'currentPassword', label: 'Current Password', key: 'current' },
+            { field: 'newPassword', label: 'New Password', key: 'new' },
             { field: 'confirmPassword', label: 'Confirm New Password', key: 'confirm' },
           ].map(({ field, label, key }) => (
             <TextField

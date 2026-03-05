@@ -37,50 +37,8 @@ import {
   Lock,
 } from '@mui/icons-material';
 
-// Dummy PPE Zones
-const initialZones = [
-  {
-    id: 'ZONE-001', name: 'Storage Block A', status: 'Active',
-    items: [
-      { id: 'PPE-001', name: 'Safety Helmet', category: 'Head Protection', quantity: 120, status: 'In Stock' },
-      { id: 'PPE-003', name: 'Safety Boots', category: 'Foot Protection', quantity: 12, status: 'Low Stock' },
-      { id: 'PPE-007', name: 'High-Vis Jacket', category: 'Body Protection', quantity: 200, status: 'In Stock' },
-    ],
-    employees: [{ id: 'EMP-001', name: 'James Carter' }],
-  },
-  {
-    id: 'ZONE-002', name: 'Loading Dock 1', status: 'Active',
-    items: [
-      { id: 'PPE-002', name: 'Safety Vest', category: 'Body Protection', quantity: 85, status: 'In Stock' },
-      { id: 'PPE-004', name: 'Safety Boots', category: 'Foot Protection', quantity: 55, status: 'In Stock' },
-    ],
-    employees: [],
-  },
-  {
-    id: 'ZONE-003', name: 'Packing Station B', status: 'Active',
-    items: [
-      { id: 'PPE-005', name: 'Steel-Toe Boots', category: 'Foot Protection', quantity: 0, status: 'Out of Stock' },
-    ],
-    employees: [],
-  },
-  {
-    id: 'ZONE-004', name: 'Restricted Area North', status: 'Active',
-    items: [
-      { id: 'PPE-006', name: 'Safety Helmet', category: 'Head Protection', quantity: 8, status: 'Low Stock' },
-    ],
-    employees: [{ id: 'EMP-003', name: 'Sarah Williams' }],
-  },
-];
-
-// Dummy Registered Employees
-const registeredEmployees = [
-  { id: 'EMP-001', name: 'James Carter' },
-  { id: 'EMP-002', name: 'Maria Santos' },
-  { id: 'EMP-003', name: 'Sarah Williams' },
-  { id: 'EMP-004', name: 'David Kim' },
-  { id: 'EMP-005', name: 'Lena Ahmed' },
-  { id: 'EMP-006', name: 'Tony Reyes' },
-];
+// Data arrays (replace with API data)
+const registeredEmployees = [];
 
 const statusColorMap = {
   'In Stock': { bg: '#dcfce7', color: '#16a34a' },
@@ -366,7 +324,7 @@ const zoneThemes = [
 
 // Zone List View
 const CurrentZones = () => {
-  const [zones, setZones] = useState(initialZones);
+  const [zones, setZones] = useState([]);
   const [selectedZone, setSelectedZone] = useState(null);
   const [search, setSearch] = useState('');
 

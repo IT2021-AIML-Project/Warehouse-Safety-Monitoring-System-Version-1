@@ -36,50 +36,34 @@ import {
   MarkEmailUnread,
 } from '@mui/icons-material';
 
-// ── Mock employees ────────────────────────────────────────────────────────────
-const MOCK_EMPLOYEES = [
-  { id: 'emp-1', name: 'Juan Dela Cruz',  role: 'Warehouse Worker',  zone: 'Zone A', email: 'juan.delacruz@safetyfirst.lk'  },
-  { id: 'emp-2', name: 'Maria Santos',    role: 'Safety Officer',    zone: 'Zone B', email: 'maria.santos@safetyfirst.lk'   },
-  { id: 'emp-3', name: 'Pedro Reyes',     role: 'Forklift Operator', zone: 'Zone A', email: 'pedro.reyes@safetyfirst.lk'    },
-  { id: 'emp-4', name: 'Ana Gonzales',    role: 'Inventory Clerk',   zone: 'Zone C', email: 'ana.gonzales@safetyfirst.lk'   },
-  { id: 'emp-5', name: 'Lito Fernandez',  role: 'Warehouse Worker',  zone: 'Zone B', email: 'lito.fernandez@safetyfirst.lk' },
-  { id: 'emp-6', name: 'Rosa Bautista',   role: 'Supervisor',        zone: 'Zone A', email: 'rosa.bautista@safetyfirst.lk'  },
-  { id: 'emp-7', name: 'Carlo Mendoza',   role: 'Forklift Operator', zone: 'Zone C', email: 'carlo.mendoza@safetyfirst.lk'  },
-  { id: 'emp-8', name: 'Nina Villanueva', role: 'Warehouse Worker',  zone: 'Zone D', email: 'nina.villanueva@safetyfirst.lk'},
-  { id: 'emp-9', name: 'Ricky Soriano',   role: 'Safety Officer',    zone: 'Zone D', email: 'ricky.soriano@safetyfirst.lk'  },
-];
-
-const ZONES = [
-  { id: 'Zone A', label: 'Zone A', color: '#1d4ed8', bg: '#dbeafe', border: '#93c5fd', lightBg: '#eff6ff', description: 'Storage Block A' },
-  { id: 'Zone B', label: 'Zone B', color: '#7c3aed', bg: '#ede9fe', border: '#c4b5fd', lightBg: '#f5f3ff', description: 'Storage Block B' },
-  { id: 'Zone C', label: 'Zone C', color: '#b45309', bg: '#fef3c7', border: '#fcd34d', lightBg: '#fffbeb', description: 'Storage Block C' },
-  { id: 'Zone D', label: 'Zone D', color: '#0f766e', bg: '#ccfbf1', border: '#5eead4', lightBg: '#f0fdfa', description: 'Storage Block D' },
-];
+// Employee and zone data (replace with API data)
+const MOCK_EMPLOYEES = [];
+const ZONES = [];
 
 const RECIPIENT_MODES = [
-  { key: 'individual', label: 'Specific Employees', icon: PersonAdd  },
-  { key: 'zone',       label: 'By Zone',            icon: LocationOn },
-  { key: 'all',        label: 'All Employees',       icon: Group      },
+  { key: 'individual', label: 'Specific Employees', icon: PersonAdd },
+  { key: 'zone', label: 'By Zone', icon: LocationOn },
+  { key: 'all', label: 'All Employees', icon: Group },
 ];
 
 const PRIORITIES = [
   { value: 'normal', label: 'Normal', color: '#475569', bg: '#f1f5f9', border: '#cbd5e1' },
-  { value: 'high',   label: 'High',   color: '#b45309', bg: '#fef3c7', border: '#fcd34d' },
+  { value: 'high', label: 'High', color: '#b45309', bg: '#fef3c7', border: '#fcd34d' },
   { value: 'urgent', label: 'Urgent', color: '#dc2626', bg: '#fee2e2', border: '#fca5a5' },
 ];
 
 // ── File helpers ──────────────────────────────────────────────────────────────
-const ALLOWED_TYPES    = ['image/jpeg','image/png','image/gif','image/webp','application/pdf'];
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
 const MAX_FILE_SIZE_MB = 10;
-const MAX_FILES        = 5;
+const MAX_FILES = 5;
 
-const getFileIcon  = (t) => t === 'application/pdf' ? PictureAsPdf : t?.startsWith('image/') ? ImageIcon : InsertDriveFile;
+const getFileIcon = (t) => t === 'application/pdf' ? PictureAsPdf : t?.startsWith('image/') ? ImageIcon : InsertDriveFile;
 const getFileColor = (t) => t === 'application/pdf'
   ? { color: '#dc2626', bg: '#fff1f2', border: '#fecaca' }
   : t?.startsWith('image/')
     ? { color: '#7c3aed', bg: '#f5f3ff', border: '#c4b5fd' }
     : { color: '#0f766e', bg: '#f0fdfa', border: '#5eead4' };
-const formatBytes = (b) => b < 1024 ? `${b} B` : b < 1048576 ? `${(b/1024).toFixed(1)} KB` : `${(b/1048576).toFixed(1)} MB`;
+const formatBytes = (b) => b < 1024 ? `${b} B` : b < 1048576 ? `${(b / 1024).toFixed(1)} KB` : `${(b / 1048576).toFixed(1)} MB`;
 
 const initForm = {
   subject: '',
@@ -94,16 +78,16 @@ const initForm = {
 
 // ─────────────────────────────────────────────────────────────────────────────
 const SendEmailForm = () => {
-  const [form, setForm]                   = useState(initForm);
-  const [attachments, setAttachments]     = useState([]);
-  const [attachError, setAttachError]     = useState('');
-  const [dragOver, setDragOver]           = useState(false);
+  const [form, setForm] = useState(initForm);
+  const [attachments, setAttachments] = useState([]);
+  const [attachError, setAttachError] = useState('');
+  const [dragOver, setDragOver] = useState(false);
   const [employeeSearch, setEmployeeSearch] = useState('');
   const [expandedZones, setExpandedZones] = useState({});
-  const [errors, setErrors]               = useState({});
-  const [successMsg, setSuccessMsg]       = useState('');
-  const [sentEmails, setSentEmails]       = useState([]);
-  const fileInputRef                      = useRef(null);
+  const [errors, setErrors] = useState({});
+  const [successMsg, setSuccessMsg] = useState('');
+  const [sentEmails, setSentEmails] = useState([]);
+  const fileInputRef = useRef(null);
 
   // ── File processing ──
   const processFiles = (rawFiles) => {
@@ -121,7 +105,7 @@ const SendEmailForm = () => {
   const removeAttachment = (id) => setAttachments((p) => p.filter((a) => a.id !== id));
 
   // ── Helpers ──
-  const zoneEmployees  = (zoneId) => MOCK_EMPLOYEES.filter((e) => e.zone === zoneId);
+  const zoneEmployees = (zoneId) => MOCK_EMPLOYEES.filter((e) => e.zone === zoneId);
   const zoneRecipients = MOCK_EMPLOYEES.filter((e) => form.selectedZones.includes(e.zone));
 
   const addEmployee = (id) => {
@@ -146,16 +130,16 @@ const SendEmailForm = () => {
   const filteredEmployees = MOCK_EMPLOYEES.filter(
     (e) => !form.selectedEmployees.includes(e.id) &&
       (e.name.toLowerCase().includes(employeeSearch.toLowerCase()) ||
-       e.role.toLowerCase().includes(employeeSearch.toLowerCase()) ||
-       e.email.toLowerCase().includes(employeeSearch.toLowerCase()) ||
-       e.zone.toLowerCase().includes(employeeSearch.toLowerCase())),
+        e.role.toLowerCase().includes(employeeSearch.toLowerCase()) ||
+        e.email.toLowerCase().includes(employeeSearch.toLowerCase()) ||
+        e.zone.toLowerCase().includes(employeeSearch.toLowerCase())),
   );
 
   // ── Validation ──
   const validate = () => {
     const errs = {};
     if (!form.subject.trim()) errs.subject = 'Subject is required.';
-    if (!form.body.trim())    errs.body    = 'Email body is required.';
+    if (!form.body.trim()) errs.body = 'Email body is required.';
     if (form.recipientMode === 'individual' && form.selectedEmployees.length === 0)
       errs.recipients = 'Select at least one recipient.';
     if (form.recipientMode === 'zone' && form.selectedZones.length === 0)
@@ -169,7 +153,7 @@ const SendEmailForm = () => {
     if (!validate()) return;
 
     let recipients;
-    if (form.recipientMode === 'all')       recipients = MOCK_EMPLOYEES;
+    if (form.recipientMode === 'all') recipients = MOCK_EMPLOYEES;
     else if (form.recipientMode === 'zone') recipients = zoneRecipients;
     else recipients = MOCK_EMPLOYEES.filter((e) => form.selectedEmployees.includes(e.id));
 
@@ -192,8 +176,8 @@ const SendEmailForm = () => {
     const label = form.recipientMode === 'all'
       ? `all ${MOCK_EMPLOYEES.length} employees`
       : form.recipientMode === 'zone'
-      ? `${recipients.length} employee(s) across ${form.selectedZones.length} zone(s)`
-      : `${recipients.length} employee(s)`;
+        ? `${recipients.length} employee(s) across ${form.selectedZones.length} zone(s)`
+        : `${recipients.length} employee(s)`;
 
     setSuccessMsg(`Email sent to ${label} successfully!`);
     setForm(initForm);
@@ -212,12 +196,16 @@ const SendEmailForm = () => {
 
       {/* ── Page Header ── */}
       <Paper elevation={0}
-        sx={{ border: '1px solid #e2e8f0', borderRadius: '16px', p: 3, mb: 3,
+        sx={{
+          border: '1px solid #e2e8f0', borderRadius: '16px', p: 3, mb: 3,
           display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 1.5,
-          background: 'linear-gradient(135deg, #f0f9ff 0%, #fff 60%)' }}>
-        <Box sx={{ width: 52, height: 52, borderRadius: '14px',
+          background: 'linear-gradient(135deg, #f0f9ff 0%, #fff 60%)'
+        }}>
+        <Box sx={{
+          width: 52, height: 52, borderRadius: '14px',
           background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
           <Email sx={{ color: '#fff', fontSize: 28 }} />
         </Box>
         <Typography sx={{ fontWeight: 800, color: '#1e293b', fontSize: '20px' }}>
@@ -254,11 +242,13 @@ const SendEmailForm = () => {
               return (
                 <Chip key={p.value} label={p.label}
                   onClick={() => setForm((f) => ({ ...f, priority: p.value }))}
-                  sx={{ fontWeight: active ? 700 : 500, fontSize: '13px', cursor: 'pointer',
+                  sx={{
+                    fontWeight: active ? 700 : 500, fontSize: '13px', cursor: 'pointer',
                     backgroundColor: active ? p.bg : '#f8fafc',
                     color: active ? p.color : '#64748b',
                     border: active ? `1.5px solid ${p.border}` : '1.5px solid #e2e8f0',
-                    '&:hover': { backgroundColor: p.bg, color: p.color } }} />
+                    '&:hover': { backgroundColor: p.bg, color: p.color }
+                  }} />
               );
             })}
           </Box>
@@ -308,9 +298,11 @@ const SendEmailForm = () => {
             </Box>
             <Chip icon={<AttachFile sx={{ fontSize: 15 }} />}
               label={`${attachments.length} / ${MAX_FILES}`} size="small"
-              sx={{ fontWeight: 700, fontSize: '12px',
+              sx={{
+                fontWeight: 700, fontSize: '12px',
                 backgroundColor: attachments.length > 0 ? '#f0f9ff' : '#f1f5f9',
-                color: attachments.length > 0 ? '#0284c7' : '#94a3b8' }} />
+                color: attachments.length > 0 ? '#0284c7' : '#94a3b8'
+              }} />
           </Box>
 
           <input ref={fileInputRef} type="file" multiple accept="image/*,application/pdf"
@@ -322,11 +314,13 @@ const SendEmailForm = () => {
             onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
             onDragLeave={() => setDragOver(false)}
             onDrop={(e) => { e.preventDefault(); setDragOver(false); processFiles(e.dataTransfer.files); }}
-            sx={{ border: `2px dashed ${dragOver ? '#0284c7' : attachError ? '#fca5a5' : '#cbd5e1'}`,
+            sx={{
+              border: `2px dashed ${dragOver ? '#0284c7' : attachError ? '#fca5a5' : '#cbd5e1'}`,
               borderRadius: '12px', p: 3, textAlign: 'center',
               cursor: attachments.length >= MAX_FILES ? 'not-allowed' : 'pointer',
               backgroundColor: dragOver ? '#f0f9ff' : '#fafafa', transition: 'all 0.2s',
-              '&:hover': attachments.length < MAX_FILES ? { borderColor: '#0284c7', backgroundColor: '#f0f9ff' } : {} }}>
+              '&:hover': attachments.length < MAX_FILES ? { borderColor: '#0284c7', backgroundColor: '#f0f9ff' } : {}
+            }}>
             <FileUpload sx={{ fontSize: 36, color: dragOver ? '#0284c7' : '#94a3b8', mb: 1 }} />
             <Typography sx={{ fontWeight: 600, color: dragOver ? '#0284c7' : '#475569', fontSize: '14px' }}>
               {attachments.length >= MAX_FILES ? `Maximum ${MAX_FILES} files reached` : 'Click or drag & drop files here'}
@@ -351,15 +345,19 @@ const SendEmailForm = () => {
                 const isImage = file.type?.startsWith('image/');
                 return (
                   <Paper key={file.id} elevation={0}
-                    sx={{ border: `1.5px solid ${clr.border}`, borderRadius: '10px', p: 1.5,
-                      display: 'flex', alignItems: 'center', gap: 1.5, backgroundColor: clr.bg }}>
+                    sx={{
+                      border: `1.5px solid ${clr.border}`, borderRadius: '10px', p: 1.5,
+                      display: 'flex', alignItems: 'center', gap: 1.5, backgroundColor: clr.bg
+                    }}>
                     {isImage
                       ? <Box component="img" src={file.url} alt={file.name}
-                          sx={{ width: 44, height: 44, borderRadius: '8px', objectFit: 'cover', border: `1px solid ${clr.border}`, flexShrink: 0 }} />
-                      : <Box sx={{ width: 44, height: 44, borderRadius: '8px', backgroundColor: '#fff', border: `1px solid ${clr.border}`,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <FileIcon sx={{ fontSize: 24, color: clr.color }} />
-                        </Box>
+                        sx={{ width: 44, height: 44, borderRadius: '8px', objectFit: 'cover', border: `1px solid ${clr.border}`, flexShrink: 0 }} />
+                      : <Box sx={{
+                        width: 44, height: 44, borderRadius: '8px', backgroundColor: '#fff', border: `1px solid ${clr.border}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                      }}>
+                        <FileIcon sx={{ fontSize: 24, color: clr.color }} />
+                      </Box>
                     }
                     <Box sx={{ flex: 1, minWidth: 0 }}>
                       <Typography sx={{ fontWeight: 600, color: '#1e293b', fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -400,24 +398,28 @@ const SendEmailForm = () => {
           {/* Type cards */}
           <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1.5, mb: 2.5 }}>
             {[
-              { key: 'individual', label: 'Individual',  sub: 'Send to specific employees', Icon: PersonAdd,  color: '#0284c7', bg: '#f0f9ff', border: '#7dd3fc', lightBg: '#e0f2fe' },
-              { key: 'zone',       label: 'By Zone',      sub: 'Target a warehouse zone',     Icon: LocationOn, color: '#7c3aed', bg: '#f5f3ff', border: '#c4b5fd', lightBg: '#ede9fe' },
-              { key: 'all',        label: 'Broadcast',    sub: 'Send to all employees',       Icon: Group,      color: '#0f766e', bg: '#f0fdfa', border: '#5eead4', lightBg: '#ccfbf1' },
+              { key: 'individual', label: 'Individual', sub: 'Send to specific employees', Icon: PersonAdd, color: '#0284c7', bg: '#f0f9ff', border: '#7dd3fc', lightBg: '#e0f2fe' },
+              { key: 'zone', label: 'By Zone', sub: 'Target a warehouse zone', Icon: LocationOn, color: '#7c3aed', bg: '#f5f3ff', border: '#c4b5fd', lightBg: '#ede9fe' },
+              { key: 'all', label: 'Broadcast', sub: 'Send to all employees', Icon: Group, color: '#0f766e', bg: '#f0fdfa', border: '#5eead4', lightBg: '#ccfbf1' },
             ].map(({ key, label, sub, Icon, color, bg, border, lightBg }) => {
               const active = form.recipientMode === key;
               return (
                 <Paper key={key} elevation={0} onClick={() => {
-                    setForm((f) => ({ ...f, recipientMode: key, selectedEmployees: [], selectedZones: [] }));
-                    setExpandedZones({});
-                    setErrors((er) => ({ ...er, recipients: '' }));
-                  }}
-                  sx={{ border: `2px solid ${active ? border : '#e2e8f0'}`, borderRadius: '14px', p: 2,
+                  setForm((f) => ({ ...f, recipientMode: key, selectedEmployees: [], selectedZones: [] }));
+                  setExpandedZones({});
+                  setErrors((er) => ({ ...er, recipients: '' }));
+                }}
+                  sx={{
+                    border: `2px solid ${active ? border : '#e2e8f0'}`, borderRadius: '14px', p: 2,
                     cursor: 'pointer', backgroundColor: active ? lightBg : '#fafafa',
                     transition: 'all 0.18s',
-                    '&:hover': { borderColor: border, backgroundColor: lightBg } }}>
-                  <Box sx={{ width: 42, height: 42, borderRadius: '11px',
+                    '&:hover': { borderColor: border, backgroundColor: lightBg }
+                  }}>
+                  <Box sx={{
+                    width: 42, height: 42, borderRadius: '11px',
                     backgroundColor: active ? bg : '#f1f5f9',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5 }}>
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5
+                  }}>
                     <Icon sx={{ fontSize: 22, color: active ? color : '#94a3b8' }} />
                   </Box>
                   <Typography sx={{ fontWeight: 700, fontSize: '14px', color: active ? color : '#1e293b', mb: 0.4 }}>
@@ -476,8 +478,10 @@ const SendEmailForm = () => {
                     <React.Fragment key={emp.id}>
                       {idx > 0 && <Divider sx={{ borderColor: '#f1f5f9' }} />}
                       <Box onClick={() => addEmployee(emp.id)}
-                        sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 2, py: 1.4,
-                          cursor: 'pointer', '&:hover': { backgroundColor: '#f0f9ff' } }}>
+                        sx={{
+                          display: 'flex', alignItems: 'center', gap: 1.5, px: 2, py: 1.4,
+                          cursor: 'pointer', '&:hover': { backgroundColor: '#f0f9ff' }
+                        }}>
                         <Avatar sx={{ width: 36, height: 36, fontSize: '13px', bgcolor: '#bae6fd', color: '#0284c7', fontWeight: 700 }}>
                           {emp.name[0]}
                         </Avatar>
@@ -508,14 +512,20 @@ const SendEmailForm = () => {
                   const expanded = expandedZones[zone.id];
                   return (
                     <Paper key={zone.id} elevation={0}
-                      sx={{ border: `1.5px solid ${selected ? zone.border : '#e2e8f0'}`,
+                      sx={{
+                        border: `1.5px solid ${selected ? zone.border : '#e2e8f0'}`,
                         borderLeft: `5px solid ${zone.color}`, borderRadius: '12px', overflow: 'hidden',
-                        backgroundColor: selected ? zone.lightBg : '#fff', transition: 'all 0.2s' }}>
+                        backgroundColor: selected ? zone.lightBg : '#fff', transition: 'all 0.2s'
+                      }}>
                       <Box onClick={() => toggleZone(zone.id)}
-                        sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 2, py: 1.6, cursor: 'pointer',
-                          '&:hover': { backgroundColor: zone.bg + '55' } }}>
-                        <Box sx={{ width: 38, height: 38, borderRadius: '10px', backgroundColor: zone.bg,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        sx={{
+                          display: 'flex', alignItems: 'center', gap: 1.5, px: 2, py: 1.6, cursor: 'pointer',
+                          '&:hover': { backgroundColor: zone.bg + '55' }
+                        }}>
+                        <Box sx={{
+                          width: 38, height: 38, borderRadius: '10px', backgroundColor: zone.bg,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                        }}>
                           <LocationOn sx={{ fontSize: 20, color: zone.color }} />
                         </Box>
                         <Box sx={{ flex: 1 }}>
@@ -602,8 +612,10 @@ const SendEmailForm = () => {
           {/* ── All employees ── */}
           {form.recipientMode === 'all' && (
             <Paper elevation={0}
-              sx={{ border: '1.5px solid #bae6fd', backgroundColor: '#f0f9ff', borderRadius: '12px', p: 2,
-                display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              sx={{
+                border: '1.5px solid #bae6fd', backgroundColor: '#f0f9ff', borderRadius: '12px', p: 2,
+                display: 'flex', alignItems: 'center', gap: 1.5
+              }}>
               <Group sx={{ color: '#0284c7', fontSize: 22 }} />
               <Box>
                 <Typography sx={{ fontWeight: 700, color: '#075985', fontSize: '14px' }}>
@@ -639,10 +651,10 @@ const SendEmailForm = () => {
                       {form.recipientMode === 'all'
                         ? `All Employees (${MOCK_EMPLOYEES.length})`
                         : form.recipientMode === 'zone' && form.selectedZones.length > 0
-                        ? form.selectedZones.join(', ')
-                        : form.selectedEmployees.length > 0
-                        ? `${form.selectedEmployees.length} selected employee(s)`
-                        : <span style={{ color: '#94a3b8' }}>— no recipients selected —</span>}
+                          ? form.selectedZones.join(', ')
+                          : form.selectedEmployees.length > 0
+                            ? `${form.selectedEmployees.length} selected employee(s)`
+                            : <span style={{ color: '#94a3b8' }}>— no recipients selected —</span>}
                     </Typography>
                   </Box>
                   {form.cc && (
@@ -682,12 +694,16 @@ const SendEmailForm = () => {
                           const clr = getFileColor(file.type);
                           return (
                             <Box key={file.id}
-                              sx={{ display: 'flex', alignItems: 'center', gap: 0.7,
+                              sx={{
+                                display: 'flex', alignItems: 'center', gap: 0.7,
                                 border: `1px solid ${clr.border}`, borderRadius: '7px',
-                                backgroundColor: clr.bg, px: 1, py: 0.5 }}>
+                                backgroundColor: clr.bg, px: 1, py: 0.5
+                              }}>
                               <FileIcon sx={{ fontSize: 14, color: clr.color }} />
-                              <Typography sx={{ fontSize: '11px', fontWeight: 600, color: clr.color,
-                                maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              <Typography sx={{
+                                fontSize: '11px', fontWeight: 600, color: clr.color,
+                                maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                              }}>
                                 {file.name}
                               </Typography>
                             </Box>
@@ -706,25 +722,29 @@ const SendEmailForm = () => {
         <Box sx={{ px: 3, pb: 3, pt: 2, display: 'flex', justifyContent: 'flex-end', gap: 1.5, borderTop: '1px solid #f1f5f9' }}>
           <Button variant="outlined"
             onClick={() => { setForm(initForm); setErrors({}); setAttachments([]); setAttachError(''); setEmployeeSearch(''); setExpandedZones({}); }}
-            sx={{ textTransform: 'none', fontWeight: 600, borderRadius: '10px', borderColor: '#e2e8f0', color: '#475569',
-              '&:hover': { borderColor: '#cbd5e1', backgroundColor: '#f8fafc' } }}>
+            sx={{
+              textTransform: 'none', fontWeight: 600, borderRadius: '10px', borderColor: '#e2e8f0', color: '#475569',
+              '&:hover': { borderColor: '#cbd5e1', backgroundColor: '#f8fafc' }
+            }}>
             Clear
           </Button>
           <Tooltip title={
             form.recipientMode === 'all'
               ? `Send to all ${MOCK_EMPLOYEES.length} employees`
               : form.recipientMode === 'zone' && form.selectedZones.length > 0
-              ? `Send to ${zoneRecipients.length} employee(s)`
-              : form.selectedEmployees.length > 0
-              ? `Send to ${form.selectedEmployees.length} employee(s)`
-              : 'Select recipients first'
+                ? `Send to ${zoneRecipients.length} employee(s)`
+                : form.selectedEmployees.length > 0
+                  ? `Send to ${form.selectedEmployees.length} employee(s)`
+                  : 'Select recipients first'
           }>
             <span>
               <Button variant="contained"
                 startIcon={<Send sx={{ fontSize: 18 }} />}
                 onClick={handleSend}
-                sx={{ textTransform: 'none', fontWeight: 700, borderRadius: '10px', fontSize: '14px', px: 3,
-                  backgroundColor: '#0284c7', '&:hover': { backgroundColor: '#0369a1' } }}>
+                sx={{
+                  textTransform: 'none', fontWeight: 700, borderRadius: '10px', fontSize: '14px', px: 3,
+                  backgroundColor: '#0284c7', '&:hover': { backgroundColor: '#0369a1' }
+                }}>
                 Send Email
               </Button>
             </span>
@@ -746,8 +766,10 @@ const SendEmailForm = () => {
                   sx={{ border: '1.5px solid #e2e8f0', borderLeft: '5px solid #0284c7', borderRadius: '12px', p: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                      <Box sx={{ width: 38, height: 38, borderRadius: '10px', backgroundColor: '#f0f9ff',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Box sx={{
+                        width: 38, height: 38, borderRadius: '10px', backgroundColor: '#f0f9ff',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                      }}>
                         <Email sx={{ fontSize: 20, color: '#0284c7' }} />
                       </Box>
                       <Box>
